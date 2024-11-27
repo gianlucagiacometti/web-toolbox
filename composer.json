@@ -26,6 +26,6 @@
     "axllent/jquery": "^3.7"
   },
   "suggest": {
-    "mobi/captcha": ">=3.10.2 required for tool SafeLogin"
+    "mobicms/captcha": "^4.0"
   }
 }
