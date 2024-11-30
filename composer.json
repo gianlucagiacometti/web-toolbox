@@ -1,5 +1,5 @@
 {
-  "name": "gianlucagiacometti/webtools",
+  "name": "gianlucagiacometti/web-toolbox",
   "description": "Set of tools for website development",
   "keywords": ["website","php","development","web","programming","js","javascript","less", "css", "stylesheet","sql","mysql","postgresql","database","tools","sqlite"],
   "homepage": "https://github.com/gianlucagiacometti/web-tools/",
@@ -20,9 +20,9 @@
     }
   ],
   "require": {
-    "php": ">=7.3.0",
+    "php": ">=8.3.0",
     "twbs/bootstrap": "^5.3",
-    "twbs/bootstrap-icons": "^1.10",
+    "twbs/bootstrap-icons": "^1.11",
     "axllent/jquery": "^3.7"
   },
   "suggest": {
