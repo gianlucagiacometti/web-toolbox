@@ -114,8 +114,8 @@ transitionType: "fade"
 maxStackMembers: 5
 // Action: sets the maximum number of toast messages visible at the same time 
 // Default value: 5
-// Accepted values: any integer
-// Note: any non integer value defaults to 5
+// Accepted values: any integer between 1 and 10
+// Note: any non integer value or any value outside the accepted interval defaults to 5
 
 headerBackgroundColor: ""
 // Action: sets the background color of the toast header
