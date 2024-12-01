@@ -9,19 +9,19 @@ function toast(type, options) {
 		autoRemove: true,
 		transitionType: "fade",
 		maxStackMembers: 5,
+		headerColor: "",
+		headerDefaultColor: "#495057",
+		headerBackgroundColor: "",
+		headerDefaultBackgroundColor: "#E2E3E5",
+		iconClass: "",
 		title: "",
 		titleAlign: "left",
-		titleColor: "",
-		titleDefaultColor: "#495057",
-		titleBackgroundColor: "",
-		titleDefaultBackgroundColor: "#E2E3E5",
-		iconClass: "",
+		bodyTextAlign: "left",
+		bodyTextColor: "",
+		bodyTextDefaultColor: "#495057",
+		bodyBackgroundColor: "",
+		bodyDefaultBackgroundColor: "#FCFCFD",
 		text: "",
-		textAlign: "left",
-		textColor: "",
-		textDefaultColor: "#495057",
-		textBackgroundColor: "",
-		textDefaultBackgroundColor: "#FCFCFD",
 		hasBootstrapIcons: true,
 		hasFontAwesome: false,
 		beforeShow: function() {},
@@ -87,8 +87,50 @@ function toast(type, options) {
 		if (typeof settings.closeIcon != "boolean") {
 			settings.closeIcon = false
 		}
+		if (typeof settings.autoClose != "number" || !Number.IsInteger(settings.autoClose) || setting.autoClose < 0) {
+			settings.autoClose = 3000
+		}
 		if (typeof settings.autoRemove != "boolean") {
-			settings.autoremove = false
+			settings.autoRemove = false
+		}
+		if (typeof settings.transitionType != "string" || !$.inArray(settings.transitionType, ["", "fade", "slide"])) {
+			settings.transitionType = ""
+		}
+		if (typeof settings.maxStackMembers != "number" || !Number.IsInteger(settings.maxStackMembers) || setting.maxStackMembers < 1 || setting.maxStackMembers > 10) {
+			settings.maxStackMembers = 5
+		}
+		if (typeof settings.headerColor != "string") {
+			settings.headerColor = ""
+		}
+		if (typeof settings.headerBackgroundColor != "string") {
+			settings.headerBackgroundColor = ""
+		}
+		if (typeof settings.iconClass != "string") {
+			settings.iconClass = ""
+		}
+		if (typeof settings.title != "string") {
+			settings.title = ""
+		}
+		if (typeof settings.titleAlign != "string" || !$.inArray(settings.titleAlign, ["left", "center", "centre", "right"])) {
+			settings.titleAlign = "left"
+		}
+		else if (settings.titleAlign == "centre") {
+			settings.titleAlign = "center"
+		}
+		if (typeof settings.bodyTextAlign != "string" || !$.inArray(settings.bodyTextAlign, ["left", "center", "centre", "right"])) {
+			settings.bodyTextAlign = "left"
+		}
+		else if (settings.bodyTextAlign == "centre") {
+			settings.bodyTextAlign = "center"
+		}
+		if (typeof settings.bodyTextColor != "string") {
+			settings.bodyTextColor = ""
+		}
+		if (typeof settings.bodyBackgroundColor != "string") {
+			settings.bodyBackgroundColor = ""
+		}
+		if (typeof settings.text != "string") {
+			settings.text = ""
 		}
 		if (typeof settings.hasBootstrapIcons != "boolean") {
 			settings.hasBootstrapIcons = false
@@ -110,41 +152,44 @@ function toast(type, options) {
 			container.empty()
 		}
 
-		if (settings.titleColor.length > 0) {
-			headerStyle += "color: " + settings.titleColor + "; border-color: " + settings.titleColor + ";"
+		if (settings.headerColor.length > 0) {
+			headerStyle += "color: " + settings.headerColor + "; border-color: " + settings.headerColor + ";"
 		}
 		else if (textColors[type]) {
 			headerStyle += "color: " + textColors[type] + "; border-color: " + textColors[type] + ";"
 		}
 		else {
-			headerStyle += "color: " + settings.titleDefaultColor + "; border-color: " + settings.titleDefaultColor + ";"
+			headerStyle += "color: " + settings.headerDefaultColor + "; border-color: " + settings.headerDefaultColor + ";"
 		}
-		if (settings.titleBackgroundColor.length > 0) {
-			headerStyle += " background-color: " + settings.titleBackgroundColor + ";"
+		if (settings.headerBackgroundColor.length > 0) {
+			headerStyle += " background-color: " + settings.headerBackgroundColor + ";"
 		}
 		else if (backgroundColors[type]) {
 			headerStyle += " background-color: " + backgroundColors[type] + ";"
 		}
 		else {
-			headerStyle += " background-color: " + settings.titleDefaultBackgroundColor + ";"
+			headerStyle += " background-color: " + settings.headerDefaultBackgroundColor + ";"
 		}
 		headerStyle = " style=\"" + headerStyle + "\""
 		content += "<div id=\"jquery-toast-header-" + random + "\" class=\"jquery-toast-header\"" + headerStyle + ">"
 
-		if (settings.textColor.length > 0) {
-			bodyStyle += "color: " + settings.textColor + "; border-color: " + settings.textColor + ";"
+		if (settings.bodyTextColor.length > 0) {
+			bodyStyle += "color: " + settings.bodyTextColor + "; border-color: " + settings.bodyTextColor + ";"
 		}
 		else {
-			bodyStyle += "color: " + settings.textDefaultColor + ";"
+			bodyStyle += "color: " + settings.bodyTextDefaultColor + ";"
 			if (textColors[type]) {
-				bodyStyle += "background-color: " + settings.textDefaultColor + ";"
+				bodyStyle += "background-color: " + settings.bodyTextDefaultColor + ";"
 			}
 		}
-		if (settings.textBackgroundColor.length > 0) {
-			bodyStyle += "background-color: " + settings.textBackgroundColor + ";"
+		if (settings.bodyBackgroundColor.length > 0) {
+			bodyStyle += "background-color: " + settings.bodyBackgroundColor + ";"
 		}
 		else {
-			bodyStyle += "background-color: " + settings.textDefaultBackgroundColor + ";"
+			bodyStyle += "background-color: " + settings.bodyDefaultBackgroundColor + ";"
+		}
+		if (settings.bodyTextAlign.length > 0) {
+			bodyStyle += "text-align: " + settings.bodyTextAlign + ";"
 		}
 		bodyStyle = " style=\"" + bodyStyle + "\""
 
@@ -158,11 +203,15 @@ function toast(type, options) {
 			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + iconClasses.fa[type] + "\"></i></div>"
 		}
 
+		if (settings.titleAlign.length > 0) {
+			titleStyle += "text-align: " + settings.titleAlign + ";"
+		}
+		content +="<div id=\"jquery-toast-header-title-" + random + "\" class=\"jquery-toast-header-title\"" + titleStyle + ">" + settings.title + "</div>"
+
 		if (settings.closeIcon) {
 			content += "<span id=\"jquery-toast-close-icon-" + random + "\" class=\"jquery-toast-close-icon\">&#xD7;</span>"
 		}
 
-		content +="<div id=\"jquery-toast-header-title-" + random + "\" class=\"jquery-toast-header-title\">" + settings.title + "</div>"
 		content += "</div>"
 
 		content += "<div id=\"jquery-toast-body-" + random + "\" class=\"jquery-toast-body\"" + bodyStyle + ">"
