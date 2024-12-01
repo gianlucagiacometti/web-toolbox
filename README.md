@@ -5,7 +5,7 @@ In other words, keep it as simple as possible.
 
 I, of course, used jQuery. I consider jQuery the most powerful javascript library ever, and I have never felt the need to re-invent the wheel.
 
-I also appreciate Bootstrap, Bootstrap Icons and Font Awesome (free version), and I consider them not only very useful web designing tools, but also the very basis of modern web design.
+I also appreciate Bootstrap, Bootstrap-Icons and FontAwesome (free version), and I consider them not only very useful web designing tools, but also the very basis of modern web design.
 Therefore, I conformed the layouts to the Bootstrap standards and I designed all my tools for an optional use of the two icon sets.
 
 ## Install
@@ -84,20 +84,128 @@ var options = {
 ```
 position: "bottom-right"
 // Action: sets the toast position
-// Default: "bottom-right"
+// Default value: "bottom-right"
 // Accepted values: "bottom-right", "bottom-centre", "bottom-center", "bottom-left", "top-left", "top-centre", "top-center", "top-right", "mid-centre", "mid-center" or an object like { top: "top value", right: "right value", bottom: "bottom value", left: "left value" } 
 
 closeIcon: true
 // Action: sets the close button either visible or hidden
-// Default: true
+// Default value: true
 // Accepted values: either true or false
 // Note: any non boolean value defaults to false
 
 autoClose: 3000
 // Action: sets the timeout for the toast to close automatically
-// Default: 3000 (3 seconds)
+// Default value: 3000 (3 seconds)
 // Accepted values: any integer (timeout values in milliseconds)
 // Note: any non integer value defaults to 3000
+
+autoRemove: true
+// Action: removes the toast element from the DOM right after the 'afterHidden' function is called 
+// Default: true
+// Accepted values: either true or false
+// Note: any non boolean value defaults to false
+
+transitionType: "fade"
+// Action: sets the transition type when the element shows or hides 
+// Default value: "fade"
+// Accepted values: "fade", "slide",any non integer value defaults to 3 "" (the latter meaning that the element is either immediately shown or hidden)
+// Note: any value different from "fade" and "slide" defaults to an empty string
+
+maxStackMembers: 5
+// Action: sets the maximum number of toast messages visible at the same time 
+// Default value: 5
+// Accepted values: any integer
+// Note: any non integer value defaults to 5
+
+headerBackgroundColor: ""
+// Action: sets the background color of the toast header
+// Default value: "#E2E3E5"
+// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
+// Note: any non string value defaults to "#E2E3E5"
+
+iconClass: ""
+// Action: sets the class of the header icon
+// Default value: ""
+// Accepted values: any icon font class name available in your project 
+// Note: if either *hasBootstrapIcons* or *hasFontAwesome* are true, the icon classes for "success", "info", "warning" and "error" *type* values are set automatically
+
+title: (optional)
+// Action: sets the toast title 
+// Default value: ""
+// Accepted values: any string
+// Note: an empty string defaults to the toast *type* string, with the first letter uppercase
+
+titleAlign: "left"
+// Action: sets the text alignement of the toast title 
+// Default value: "left"
+// Accepted values: "left", "center", "right"
+// Note: any non string value and any string different from the accepted values defaults to "left"
+
+titleColor: ""
+// Action: sets the color of the toast title and the header border
+// Default value: "#495057"
+// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
+// Note: any non string value defaults to "#495057"
+
+bodyTextAlign: "left"
+// Action: sets the alignement of the toast body 
+// Default value: "left"
+// Accepted values: "left", "center", "right"
+// Note: any non string value and any string different from the accepted values defaults to "left"
+
+bodyColor: ""
+// Action: sets the color of the toast body
+// Default value: "#495057"
+// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
+// Note: any non string value defaults to "#495057"
+
+bodyBackgroundColor: ""
+// Action: sets the background color of the toast body
+// Default value: "#FCFCFD"
+// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
+// Note: any non string value defaults to "#FCFCFD"
+
+text: ""
+// Action: sets the toast message 
+// Default value: ""
+// Accepted values: simple text, array or any HTML script
+// Note: if the value is an array, the result will be an un ordered list in which any element of the array becomes a list item
+
+hasBootstrapIcons: true
+// Action: automatically sets Boostrap-Icons icon classes for "success", "info", "warning" and "error" *type* values
+// Default: true
+// Accepted values: either true or false
+// Note: any non boolean value defaults to false, and, if both hasBootstrapIcons and hasFontAwesome are set true, hasBootstrapIcons gets priority
+
+hasFontAwesome: false
+// Action: automatically sets FontAwesome icon classes for "success", "info", "warning" and "error" *type* values
+// Default: false
+// Accepted values: either true or false
+// Note: any non boolean value defaults to false, and, if both hasBootstrapIcons and hasFontAwesome are set true, hasBootstrapIcons gets priority
+
+beforeShow: function() {}
+// Action: function called before the toast is shown
+// Default: empty function
+// Accepted values: any function
+// Note: the parameter is ignored if it's not a function
+
+afterShown: function() {}
+// Action: function called after the toast is shown
+// Default: empty function
+// Accepted values: any function
+// Note: the parameter is ignored if it's not a function
+
+beforeHide: function() {}
+// Action: function called before the toast is hidden
+// Default: empty function
+// Accepted values: any function
+// Note: the parameter is ignored if it's not a function
+
+afterHidden: function() {}
+// Action: function called after the toast is shown
+// Default: empty function
+// Accepted values: any function
+// Note: the parameter is ignored if it's not a function
 
 ```
 
