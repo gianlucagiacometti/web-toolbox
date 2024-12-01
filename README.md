@@ -121,19 +121,19 @@ headerColor: ""
 // Action: sets the color of the toast header elements (icon, title and close icon), and the header border
 // Default value: "#495057"
 // Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
-// Note: any non string value defaults to "#495057"
+// Note: any non string value defaults to "#495057", and, if no value is provided, the header color for "success", "info", "warning" and "error" *type* values is set automatically
 
 headerBackgroundColor: ""
 // Action: sets the background color of the toast header
 // Default value: "#E2E3E5"
 // Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
-// Note: any non string value defaults to "#E2E3E5"
+// Note: any non string value defaults to "#E2E3E5", and, if no value is provided, the header background color for "success", "info", "warning" and "error" *type* values is set automatically
 
 iconClass: ""
 // Action: sets the class of the header icon
 // Default value: ""
 // Accepted values: any icon font class name available in your project 
-// Note: if either *hasBootstrapIcons* or *hasFontAwesome* are true, the icon classes for "success", "info", "warning" and "error" *type* values are set automatically
+// Note: if either *hasBootstrapIcons* or *hasFontAwesome* are true, the icon class for "success", "info", "warning" and "error" *type* values is set automatically
 
 title: (optional)
 // Action: sets the toast title 
