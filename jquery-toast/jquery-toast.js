@@ -73,6 +73,7 @@ function toast(type, options) {
 
 		var content = "",
 		headerStyle = "",
+		titleStyle = "",
 		bodyStyle = "",
 		toastElement = toastElement || $("<div></div>", {
 			id: "jquery-toast-" + random,
@@ -87,7 +88,7 @@ function toast(type, options) {
 		if (typeof settings.closeIcon != "boolean") {
 			settings.closeIcon = false
 		}
-		if (typeof settings.autoClose != "number" || !Number.IsInteger(settings.autoClose) || setting.autoClose < 0) {
+		if (typeof settings.autoClose != "number" || !Number.isInteger(settings.autoClose) || setting.autoClose < 0) {
 			settings.autoClose = 3000
 		}
 		if (typeof settings.autoRemove != "boolean") {
@@ -96,7 +97,7 @@ function toast(type, options) {
 		if (typeof settings.transitionType != "string" || !$.inArray(settings.transitionType, ["", "fade", "slide"])) {
 			settings.transitionType = ""
 		}
-		if (typeof settings.maxStackMembers != "number" || !Number.IsInteger(settings.maxStackMembers) || setting.maxStackMembers < 1 || setting.maxStackMembers > 10) {
+		if (typeof settings.maxStackMembers != "number" || !Number.isInteger(settings.maxStackMembers) || settings.maxStackMembers < 1 || settings.maxStackMembers > 10) {
 			settings.maxStackMembers = 5
 		}
 		if (typeof settings.headerColor != "string") {
