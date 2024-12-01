@@ -108,7 +108,7 @@ autoRemove: true
 transitionType: "fade"
 // Action: sets the transition type when the element shows or hides 
 // Default value: "fade"
-// Accepted values: "fade", "slide",any non integer value defaults to 3 "" (the latter meaning that the element is either immediately shown or hidden)
+// Accepted values: "fade", "slide", "" (the latter meaning that the element is either immediately shown or hidden)
 // Note: any value different from "fade" and "slide" defaults to an empty string
 
 maxStackMembers: 5
