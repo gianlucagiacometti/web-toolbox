@@ -61,15 +61,15 @@ var options = {
     autoRemove:              // Boolean
     transitionType:          // String
     maxStackMembers:         // Integer
+    headerColor:             // String
+    headerBackgroundColor:   // String
+    iconClass:               // String
     title:                   // String
     titleAlign:              // String
-    titleColor:              // String
-    titleBackgroundColor:    // String
-    iconClass:               // String
+    bodyTextAlign:           // String
+    bodyTextColor:           // String
+    bodyBackgroundColor:     // String
     text:                    // String
-    textAlign:               // String
-    textColor:               // String
-    textBackgroundColor:     // String
     hasBootstrapIcons:       // Boolean
     hasFontAwesome:          // Boolean
     beforeShow:              // Function
@@ -117,6 +117,12 @@ maxStackMembers: 5
 // Accepted values: any integer between 1 and 10
 // Note: any non integer value or any value outside the accepted interval defaults to 5
 
+headerColor: ""
+// Action: sets the color of the toast header elements (icon, title and close icon), and the header border
+// Default value: "#495057"
+// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
+// Note: any non string value defaults to "#495057"
+
 headerBackgroundColor: ""
 // Action: sets the background color of the toast header
 // Default value: "#E2E3E5"
@@ -140,12 +146,6 @@ titleAlign: "left"
 // Default value: "left"
 // Accepted values: "left", "center", "right"
 // Note: any non string value and any string different from the accepted values defaults to "left"
-
-titleColor: ""
-// Action: sets the color of the toast title and the header border
-// Default value: "#495057"
-// Accepted values: any CSS color using predefined color names, or RGB, HEX, HSL, RGBA, HSLA values
-// Note: any non string value defaults to "#495057"
 
 bodyTextAlign: "left"
 // Action: sets the alignement of the toast body 
