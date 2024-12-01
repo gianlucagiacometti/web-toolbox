@@ -144,13 +144,13 @@ title: (optional)
 titleAlign: "left"
 // Action: sets the text alignement of the toast title 
 // Default value: "left"
-// Accepted values: "left", "center", "right"
+// Accepted values: "left", "centre", "center", "right"
 // Note: any non string value and any string different from the accepted values defaults to "left"
 
 bodyTextAlign: "left"
 // Action: sets the alignement of the toast body 
 // Default value: "left"
-// Accepted values: "left", "center", "right"
+// Accepted values: "left", "centre", "center", "right"
 // Note: any non string value and any string different from the accepted values defaults to "left"
 
 bodyColor: ""
