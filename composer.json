@@ -25,6 +25,7 @@
   "suggest": {
     "twbs/bootstrap": "^5.3",
     "twbs/bootstrap-icons": "^1.11",
-    "axllent/jquery": "^3.7"
+    "axllent/jquery": "^3.7",
+    "fortawesome/font-awesome": "^6.7"
   }
 }
