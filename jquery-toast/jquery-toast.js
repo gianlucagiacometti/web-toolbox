@@ -88,9 +88,14 @@ function toast(type, options) {
 		if (typeof settings.closeIcon != "boolean") {
 			settings.closeIcon = false
 		}
-		if (typeof settings.autoClose != "number" || !Number.isInteger(settings.autoClose) || setting.autoClose < 0) {
-			settings.autoClose = 3000
-		}
+                if (typeof settings.autoClose != "number" || !Number.isInteger(settings.autoClose)) {
+                        if (!typeof settings.autoClose == "boolean" && settings.autoClose === false) {
+                                settings.autoClose = 3000
+                        }
+                }
+                else if (settings.autoClose < 0) {
+                        settings.autoClose = false
+                }
 		if (typeof settings.autoRemove != "boolean") {
 			settings.autoRemove = false
 		}
