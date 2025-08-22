@@ -58,7 +58,7 @@ These default colours correspond to the equivalent Bootstrap colours for the sam
 var options = {
     position:                // String
     closeIcon:               // Boolean
-    autoClose:               // Integer
+    autoClose:               // Integer|false
     autoRemove:              // Boolean
     transitionType:          // String
     maxStackMembers:         // Integer
@@ -97,8 +97,8 @@ closeIcon: true
 autoClose: 3000
 // Action: sets the timeout for the toast to close automatically
 // Default value: 3000 (3 seconds)
-// Accepted values: any integer (timeout values in milliseconds)
-// Note: any non integer value defaults to 3000
+// Accepted values: any integer (timeout values in milliseconds) or false
+// Note: any non integer value different from boolean false defaults to 3000
 
 autoRemove: true
 // Action: removes the toast element from the DOM right after the 'afterHidden' function is called 
