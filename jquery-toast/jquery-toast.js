@@ -34,7 +34,7 @@ function toast(type, options) {
 
 	random = Math.floor(Math.random() * Date.now()).toString(16),
 
-	positions = ["bottom-right", "bottom-center", "bottom-left", "top-left", "top-center", "top-right", "mid-center"],
+	positions = ["bottom-right", "bottom-centre", "bottom-center", "bottom-left", "top-left", "top-centre", "top-center", "top-right", "mid-centre", "mid-center"],
 
 	iconClasses = {
 		'bi': {
