@@ -36,14 +36,15 @@ var MyToast = toast(type, options)
 ### Basic usage examples
 
 ```
-toast("success", { title: "Toast personalised title", text: "Toast success message" }
+toast("success", { title: "Toast personalised title", text: "Toast success message" })
 ```
 ```
-toast("error", { text: "Toast error message", hasBootstrapIcons: true }
+toast("error", { text: "Toast error message", hasBootstrapIcons: true })
 ```
 ```
-toast("warning", { text: "Toast warning message", hasFontAwesome: true }
+toast("warning", { text: "Toast warning message", hasFontAwesome: true })
 ```
+NOTE: ```hasBootstrapIcons: true``` is the default setting.
 ### Toast type
 
 *type* can be any string.
