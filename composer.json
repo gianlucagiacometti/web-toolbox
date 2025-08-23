@@ -5,7 +5,7 @@
   "homepage": "https://github.com/gianlucagiacometti/web-toolbox/",
   "license": "GPL-3.0-or-later",
   "type": "library",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "authors": [
     {
       "name": "Gianluca Giacometti",
@@ -16,7 +16,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://www.gianlucagiacometti.it/public-assets/web-toolbox/web-toolbox-1.0.1.zip"
+      "url": "https://www.gianlucagiacometti.it/public-assets/web-toolbox/web-toolbox-1.1.0.zip"
     }
   ],
   "require": {
