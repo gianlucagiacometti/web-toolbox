@@ -78,71 +78,75 @@ function toast(type, options) {
 		toastElement = toastElement || $("<div></div>", {
 			id: "jquery-toast-" + random,
 			class: "jquery-toast"
-		}).data('id', random)
+		}).data('id', random);
 
-		type = type.toLowerCase()
+		type = type.toLowerCase();
 		if (!settings.title.length) {
-			settings.title = type.charAt(0).toUpperCase() + type.substr(1)
+			settings.title = type.charAt(0).toUpperCase() + type.substr(1);
+		}
+
+		if (settings.message && !settings.text) {
+			settings.text = settings.message;
 		}
 
 		if (typeof settings.closeIcon != "boolean") {
-			settings.closeIcon = false
+			settings.closeIcon = false;
 		}
 		if (typeof settings.autoClose != "number" || !Number.isInteger(settings.autoClose)) {
 			if (!typeof settings.autoClose == "boolean" && settings.autoClose === false) {
-				settings.autoClose = 3000
+				settings.autoClose = 3000;
 			}
 		}
 		else if (settings.autoClose < 0) {
-			settings.autoClose = false
+			settings.autoClose = false;
 		}
 		if (typeof settings.autoRemove != "boolean") {
-			settings.autoRemove = false
+			settings.autoRemove = false;
 		}
 		if (typeof settings.transitionType != "string" || !$.inArray(settings.transitionType, ["", "fade", "slide"])) {
-			settings.transitionType = ""
+			settings.transitionType = "";
 		}
 		if (typeof settings.maxStackMembers != "number" || !Number.isInteger(settings.maxStackMembers) || settings.maxStackMembers < 1 || settings.maxStackMembers > 10) {
-			settings.maxStackMembers = 5
+			settings.maxStackMembers = 5;
 		}
 		if (typeof settings.headerColor != "string") {
-			settings.headerColor = ""
+			settings.headerColor = "";
 		}
 		if (typeof settings.headerBackgroundColor != "string") {
-			settings.headerBackgroundColor = ""
+			settings.headerBackgroundColor = "";
 		}
 		if (typeof settings.iconClass != "string") {
-			settings.iconClass = ""
+			settings.iconClass = "";
 		}
 		if (typeof settings.title != "string") {
-			settings.title = ""
+			settings.title = "";
 		}
 		if (typeof settings.titleAlign != "string" || !$.inArray(settings.titleAlign, ["left", "center", "centre", "right"])) {
-			settings.titleAlign = "left"
+			settings.titleAlign = "left";
 		}
 		else if (settings.titleAlign == "centre") {
-			settings.titleAlign = "center"
+			settings.titleAlign = "center";
 		}
 		if (typeof settings.bodyTextAlign != "string" || !$.inArray(settings.bodyTextAlign, ["left", "center", "centre", "right"])) {
-			settings.bodyTextAlign = "left"
+			settings.bodyTextAlign = "left";
 		}
 		else if (settings.bodyTextAlign == "centre") {
-			settings.bodyTextAlign = "center"
+			settings.bodyTextAlign = "center";
 		}
 		if (typeof settings.bodyTextColor != "string") {
-			settings.bodyTextColor = ""
+			settings.bodyTextColor = "";
 		}
 		if (typeof settings.bodyBackgroundColor != "string") {
-			settings.bodyBackgroundColor = ""
+			settings.bodyBackgroundColor = "";
 		}
 		if (typeof settings.text != "string") {
-			settings.text = ""
+			settings.text = "";
 		}
 		if (typeof settings.hasBootstrapIcons != "boolean") {
-			settings.hasBootstrapIcons = false
+			settings.hasBootstrapIcons = false;
 		}
 		if (typeof settings.hasFontAwesome != "boolean") {
-			settings.hasFontAwesome = false
+			settings.hasFontAwesome = false;
 		}
 
 		if (!container.length) {
@@ -151,98 +155,98 @@ function toast(type, options) {
 				class: "jquery-toast-container",
 				role: "alert",
 				'aria-live': "polite"
-			})
-			$('body').append(container)
+			});
+			$('body').append(container);
 		}
 		else if (!settings.maxStackMembers || isNaN(parseInt(settings.maxStackMembers))) {
-			container.empty()
+			container.empty();
 		}
 
 		if (settings.headerColor.length > 0) {
-			headerStyle += "color: " + settings.headerColor + "; border-color: " + settings.headerColor + ";"
+			headerStyle += "color: " + settings.headerColor + "; border-color: " + settings.headerColor + ";";
 		}
 		else if (textColors[type]) {
-			headerStyle += "color: " + textColors[type] + "; border-color: " + textColors[type] + ";"
+			headerStyle += "color: " + textColors[type] + "; border-color: " + textColors[type] + ";";
 		}
 		else {
-			headerStyle += "color: " + settings.headerDefaultColor + "; border-color: " + settings.headerDefaultColor + ";"
+			headerStyle += "color: " + settings.headerDefaultColor + "; border-color: " + settings.headerDefaultColor + ";";
 		}
 		if (settings.headerBackgroundColor.length > 0) {
-			headerStyle += " background-color: " + settings.headerBackgroundColor + ";"
+			headerStyle += " background-color: " + settings.headerBackgroundColor + ";";
 		}
 		else if (backgroundColors[type]) {
-			headerStyle += " background-color: " + backgroundColors[type] + ";"
+			headerStyle += " background-color: " + backgroundColors[type] + ";";
 		}
 		else {
-			headerStyle += " background-color: " + settings.headerDefaultBackgroundColor + ";"
+			headerStyle += " background-color: " + settings.headerDefaultBackgroundColor + ";";
 		}
-		headerStyle = " style=\"" + headerStyle + "\""
-		content += "<div id=\"jquery-toast-header-" + random + "\" class=\"jquery-toast-header\"" + headerStyle + ">"
+		headerStyle = " style=\"" + headerStyle + "\"";
+		content += "<div id=\"jquery-toast-header-" + random + "\" class=\"jquery-toast-header\"" + headerStyle + ">";
 
 		if (settings.bodyTextColor.length > 0) {
-			bodyStyle += "color: " + settings.bodyTextColor + "; border-color: " + settings.bodyTextColor + ";"
+			bodyStyle += "color: " + settings.bodyTextColor + "; border-color: " + settings.bodyTextColor + ";";
 		}
 		else {
-			bodyStyle += "color: " + settings.bodyTextDefaultColor + ";"
+			bodyStyle += "color: " + settings.bodyTextDefaultColor + ";";
 			if (textColors[type]) {
-				bodyStyle += "background-color: " + settings.bodyTextDefaultColor + ";"
+				bodyStyle += "background-color: " + settings.bodyTextDefaultColor + ";";
 			}
 		}
 		if (settings.bodyBackgroundColor.length > 0) {
-			bodyStyle += "background-color: " + settings.bodyBackgroundColor + ";"
+			bodyStyle += "background-color: " + settings.bodyBackgroundColor + ";";
 		}
 		else {
-			bodyStyle += "background-color: " + settings.bodyDefaultBackgroundColor + ";"
+			bodyStyle += "background-color: " + settings.bodyDefaultBackgroundColor + ";";
 		}
 		if (settings.bodyTextAlign.length > 0) {
-			bodyStyle += "text-align: " + settings.bodyTextAlign + ";"
+			bodyStyle += "text-align: " + settings.bodyTextAlign + ";";
 		}
-		bodyStyle = " style=\"" + bodyStyle + "\""
+		bodyStyle = " style=\"" + bodyStyle + "\"";
 
 		if (settings.iconClass.length > 0) {
-			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + settings.iconClass + "\"></i></div>"
+			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + settings.iconClass + "\"></i></div>";
 		}
 		else if (settings.hasBootstrapIcons && iconClasses.bi[type]) {
-			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + iconClasses.bi[type] + "\"></i></div>"
+			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + iconClasses.bi[type] + "\"></i></div>";
 		}
 		else if (settings.hasFontAwesome && iconClasses.fa[type]) {
-			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + iconClasses.fa[type] + "\"></i></div>"
+			content += "<div id=\"jquery-toast-header-icon-" + random + "\" class=\"jquery-toast-header-icon\"><i class=\"" + iconClasses.fa[type] + "\"></i></div>";
 		}
 
 		if (settings.titleAlign.length > 0) {
-			titleStyle += "text-align: " + settings.titleAlign + ";"
+			titleStyle += "text-align: " + settings.titleAlign + ";";
 		}
-		content +="<div id=\"jquery-toast-header-title-" + random + "\" class=\"jquery-toast-header-title\"" + titleStyle + ">" + settings.title + "</div>"
+		content +="<div id=\"jquery-toast-header-title-" + random + "\" class=\"jquery-toast-header-title\"" + titleStyle + ">" + settings.title + "</div>";
 
 		if (settings.closeIcon) {
-			content += "<span id=\"jquery-toast-close-icon-" + random + "\" class=\"jquery-toast-close-icon\">&#xD7;</span>"
+			content += "<span id=\"jquery-toast-close-icon-" + random + "\" class=\"jquery-toast-close-icon\">&#xD7;</span>";
 		}
 
-		content += "</div>"
+		content += "</div>";
 
-		content += "<div id=\"jquery-toast-body-" + random + "\" class=\"jquery-toast-body\"" + bodyStyle + ">"
+		content += "<div id=\"jquery-toast-body-" + random + "\" class=\"jquery-toast-body\"" + bodyStyle + ">";
 		if (settings.text instanceof Array) {
-			content += "<ul id=\"jquery-toast-body-list-" + random + "\" class=\"jquery-toast-body-list\">"
+			content += "<ul id=\"jquery-toast-body-list-" + random + "\" class=\"jquery-toast-body-list\">";
 			for (let i = 0; i < settings.text.length; i++) {
-				content += "<li id=\"jquery-toast-body-list-item-" + random + "-" + i + "\" class=\"jquery-toast-body-list-item\" data-id=\"" + i + "\">" + settings.text[i] + "</li>"
+				content += "<li id=\"jquery-toast-body-list-item-" + random + "-" + i + "\" class=\"jquery-toast-body-list-item\" data-id=\"" + i + "\">" + settings.text[i] + "</li>";
 			}
-			content += "</ul>"
+			content += "</ul>";
 		}
 		else {
 			content += settings.text;
 		}
-		content += "</div>"
+		content += "</div>";
 
-		toastElement.html(content).hide()
+		toastElement.html(content).hide();
 
-		container.find('.jquery-toast:hidden').remove()
+		container.find('.jquery-toast:hidden').remove();
 
-		container.append(toastElement)
+		container.append(toastElement);
 
 		if (settings.maxStackMembers && !isNaN(parseInt(settings.maxStackMembers))) {
 			let toasts = container.find('.jquery-toast').length - settings.maxStackMembers;
 			if (toasts > 0) {
-				container.find('.jquery-toast').slice(0, toasts).remove()
+				container.find('.jquery-toast').slice(0, toasts).remove();
 			}
 		}
 
@@ -253,45 +257,45 @@ function toast(type, options) {
 					container.css({
 						left: $(window).outerWidth() > 576 ? $(window).outerWidth()/2 - container.outerWidth()/2 : "auto",
 						bottom: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 				case "bottom-left":
 					container.css({
 						left: $(window).outerWidth() > 576 ? 12 : 2,
 						bottom: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 				case "top-left":
 					container.css({
 						left: $(window).outerWidth() > 576 ? 12 : 2,
 						top: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 				case "top-centre":
 				case "top-center":
 					container.css({
 						left: $(window).outerWidth() > 576 ? $(window).outerWidth()/2 - container.outerWidth()/2 : "auto",
 						top: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 				case "top-right":
 					container.css({
 						right: $(window).outerWidth() > 576 ? 20 : 12,
 						top: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 				case "mid-centre":
 				case "mid-center":
 					container.css({
 						left: $(window).outerWidth()/2 - container.outerWidth()/2,
 						top: $(window).outerHeight()/2 - container.outerHeight()/2
-					})
+					});
 					break;
 				default:
 					container.css({
 						right: $(window).outerWidth() > 576 ? 20 : 12,
 						bottom: $(window).outerWidth() > 576 ? 12 : 2
-					})
+					});
 					break;
 			}
 		}
@@ -301,104 +305,104 @@ function toast(type, options) {
 				bottom: settings.position.bottom && settings.position.bottom != "auto" && !isNaN(parseInt(settings.position.bottom)) ? settings.position.bottom : "auto",
 				left: settings.position.left && settings.position.left != "auto" && !isNaN(parseInt(settings.position.left)) ? settings.position.left : "auto",
 				right: settings.position.right && settings.position.right != "auto" && !isNaN(parseInt(settings.position.right)) ? settings.position.right : "auto"
-			})
+			});
 		}
 		else {
 			container.css({
 				right: $(window).outerWidth() > 576 ? 20 : 12,
 				bottom: $(window).outerWidth() > 576 ? 12 : 2
-			})
+			});
 		}
 
 		if (typeof settings.beforeShow == 'function') {
 			toastElement.on('beforeShow', function() {
-				settings.beforeShow(toastElement)
-			})
+				settings.beforeShow(toastElement);
+			});
 		}
 
 		if (typeof settings.afterShown == 'function') {
 			toastElement.on('afterShown', function() {
-				settings.afterShown(toastElement)
-			})
+				settings.afterShown(toastElement);
+			});
 		}
 
 		if (typeof settings.beforeHide == 'function') {
 			toastElement.on('beforeHide', function() {
-				settings.beforeHide(toastElement)
-			})
+				settings.beforeHide(toastElement);
+			});
 		}
 		if (typeof settings.afterHidden == 'function') {
 			toastElement.on('afterHidden', function() {
-				settings.afterHidden(toastElement)
-			})
+				settings.afterHidden(toastElement);
+			});
 		}
 
 		$("#jquery-toast-close-icon-" + random).on('click', function(e) {
-			e.preventDefault()
-			close(toastElement)
-		})
+			e.preventDefault();
+			close(toastElement);
+		});
 
-		toastElement.trigger('beforeShow')
+		toastElement.trigger('beforeShow');
 
 		switch (settings.transitionType.toLowerCase()) {
 			case "fade":
 				toastElement.fadeIn(500, function() {
-					toastElement.trigger('afterShown')
-				})
+					toastElement.trigger('afterShown');
+				});
 				break
 			case "slide":
 				toastElement.slideDown(500, function() {
-					toastElement.trigger('afterShown')
-				})
+					toastElement.trigger('afterShown');
+				});
 				break
 			default:
 				toastElement.show(function() {
-					toastElement.trigger('afterShown')
-				})
+					toastElement.trigger('afterShown');
+				});
 				break
 		}
 
 		if (settings.autoClose) {
 			window.setTimeout(() => {
-				close(toastElement)
-			}, settings.autoClose)
+				close(toastElement);
+			}, settings.autoClose);
 		}
 
-	return toastElement
+	return toastElement;
 
 	},
 
 	close = function(toastElement) {
-		toastElement.trigger('beforeHide')
+		toastElement.trigger('beforeHide');
 		switch (settings.transitionType.toLowerCase()) {
 			case "fade":
 				toastElement.fadeOut(500, function() {
-					toastElement.trigger('afterHidden')
-				})
+					toastElement.trigger('afterHidden');
+				});
 				break
 			case "slide":
 				toastElement.slideUp(500, function () {
-					toastElement.trigger('afterHidden')
-				})
+					toastElement.trigger('afterHidden');
+				});
 				break
 			default:
 				toastElement.hide(function () {
-					toastElement.trigger('afterHidden')
-				})
+					toastElement.trigger('afterHidden');
+				});
 				break
 		}
 		if (settings.autoRemove) {
 			window.setTimeout(() => {
-				toastElement.remove()
-			}, 505)
+				toastElement.remove();
+			}, 505);
 		}
 	},
 
 	remove = function() {
-		toastElement.remove()
+		toastElement.remove();
 	}
 
-	return show()
+	return show();
 
 }
 
