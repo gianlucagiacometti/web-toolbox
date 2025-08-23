@@ -45,6 +45,7 @@ toast("error", { text: "Toast error message", hasBootstrapIcons: true })
 toast("warning", { text: "Toast warning message", hasFontAwesome: true })
 ```
 NOTE: ```hasBootstrapIcons: true``` is the default setting.
+NOTE: ```message``` is a synonym of ```text```.
 ### Toast type
 
 *type* can be any string.
