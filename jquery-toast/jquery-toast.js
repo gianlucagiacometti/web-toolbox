@@ -97,7 +97,7 @@ function toast(type, options) {
 				settings.autoClose = 3000;
 			}
 		}
-		else if (settings.autoClose < 0) {
+		else if (settings.autoClose <= 0) {
 			settings.autoClose = false;
 		}
 		if (typeof settings.autoRemove != "boolean") {
