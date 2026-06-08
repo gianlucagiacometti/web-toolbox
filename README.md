@@ -87,7 +87,7 @@ var options = {
     bodyTextAlign:           // String
     bodyTextColor:           // String
     bodyBackgroundColor:     // String
-    text:                    // String
+    text:                    // String|Array
     hasBootstrapIcons:       // Boolean
     hasFontAwesome:          // Boolean
     beforeShow:              // Function
@@ -187,7 +187,7 @@ text: ""
 // Action: sets the toast message 
 // Default value: ""
 // Accepted values: simple text, array or any HTML script
-// Note: if the value is an array, the result will be an un ordered list in which any element of the array becomes a list item
+// Note: if the value is an array, the result will be an unordered list in which any element of the array becomes a list item
 
 hasBootstrapIcons: true
 // Action: automatically sets Boostrap-Icons icon classes for "success", "info", "warning" and "error" *type* values
