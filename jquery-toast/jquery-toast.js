@@ -1,3 +1,27 @@
+/**
+ * Displays a toast notification.
+ *
+ * Security note:
+ * title and text may contain HTML and are rendered directly.
+ * This is intentional, but it means untrusted user input must be escaped
+ * or sanitised before being passed to this function.
+ *
+ * When text is an array, each item is rendered inside an <li> element and
+ * should also be escaped if it contains untrusted content.
+ *
+ * Example:
+ * const safeText = $("<div>").text(userInput).html();
+ *
+ * @param {string} type
+ *        Toast type/style.
+ *
+ * @param {object} options
+ *        Toast configuration.
+ *
+ * @return {jQuery}
+ *        The generated toast container/object.
+ */
+
 "use strict"
 
 function toast(type, options) {
@@ -93,7 +117,7 @@ function toast(type, options) {
 			settings.closeIcon = false;
 		}
 		if (typeof settings.autoClose != "number" || !Number.isInteger(settings.autoClose)) {
-			if (!typeof settings.autoClose == "boolean" && settings.autoClose === false) {
+			if (typeof settings.autoClose !== "boolean" || settings.autoClose !== false) {
 				settings.autoClose = 3000;
 			}
 		}
@@ -103,7 +127,7 @@ function toast(type, options) {
 		if (typeof settings.autoRemove != "boolean") {
 			settings.autoRemove = false;
 		}
-		if (typeof settings.transitionType != "string" || !$.inArray(settings.transitionType, ["", "fade", "slide"])) {
+		if (typeof settings.transitionType != "string" || $.inArray(settings.transitionType, ["", "fade", "slide"]) === -1) {
 			settings.transitionType = "";
 		}
 		if (typeof settings.maxStackMembers != "number" || !Number.isInteger(settings.maxStackMembers) || settings.maxStackMembers < 1 || settings.maxStackMembers > 10) {
@@ -121,13 +145,13 @@ function toast(type, options) {
 		if (typeof settings.title != "string") {
 			settings.title = "";
 		}
-		if (typeof settings.titleAlign != "string" || !$.inArray(settings.titleAlign, ["left", "center", "centre", "right"])) {
+		if (typeof settings.titleAlign != "string" || $.inArray(settings.titleAlign, ["left", "center", "centre", "right"]) === -1) {
 			settings.titleAlign = "left";
 		}
 		else if (settings.titleAlign == "centre") {
 			settings.titleAlign = "center";
 		}
-		if (typeof settings.bodyTextAlign != "string" || !$.inArray(settings.bodyTextAlign, ["left", "center", "centre", "right"])) {
+		if (typeof settings.bodyTextAlign != "string" || $.inArray(settings.bodyTextAlign, ["left", "center", "centre", "right"]) === -1) {
 			settings.bodyTextAlign = "left";
 		}
 		else if (settings.bodyTextAlign == "centre") {
@@ -139,7 +163,7 @@ function toast(type, options) {
 		if (typeof settings.bodyBackgroundColor != "string") {
 			settings.bodyBackgroundColor = "";
 		}
-		if (typeof settings.text != "string") {
+		if (typeof settings.text != "string" && !Array.isArray(settings.text)) {
 			settings.text = "";
 		}
 		if (typeof settings.hasBootstrapIcons != "boolean") {
@@ -225,7 +249,7 @@ function toast(type, options) {
 		content += "</div>";
 
 		content += "<div id=\"jquery-toast-body-" + random + "\" class=\"jquery-toast-body\"" + bodyStyle + ">";
-		if (settings.text instanceof Array) {
+		if (Array.isArray(settings.text)) {
 			content += "<ul id=\"jquery-toast-body-list-" + random + "\" class=\"jquery-toast-body-list\">";
 			for (let i = 0; i < settings.text.length; i++) {
 				content += "<li id=\"jquery-toast-body-list-item-" + random + "-" + i + "\" class=\"jquery-toast-body-list-item\" data-id=\"" + i + "\">" + settings.text[i] + "</li>";
