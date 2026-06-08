@@ -54,6 +54,21 @@ NOTE: ```message``` is a synonym of ```text```.
 If the type value is one of the following: "success", "info", "warning" or "error", a default colour is automatically set for the title, the header background, and, if there is one, the header icon.
 These default colours correspond to the equivalent Bootstrap colours for the same message types.
 
+### Escaping untrusted text
+
+`jquery-toast` allows HTML in `title` and `text`.
+
+When you need to display untrusted user input, escape it first:
+
+```js
+const escapeHTML = (string) => $("<div>").text(string).html();
+
+toast("info", {
+        title: "Message",
+        text: escapeHTML(userInput)
+});
+```
+
 ### Toast options
 
 ```
