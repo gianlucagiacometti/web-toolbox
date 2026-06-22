@@ -8,6 +8,13 @@ I, of course, used jQuery. I consider jQuery the most powerful javascript librar
 I also appreciate Bootstrap, Bootstrap-Icons and FontAwesome (free version), and I consider them not only very useful web designing tools, but also the very basis of modern web design.
 Therefore, I conformed the layouts to the Bootstrap standards and I designed all my tools for an optional use of the two icon sets.
 
+## Requirements
+
+- jQuery 4
+- Bootstrap Select >= 1.5.3
+
+jQuery is treated as a frontend dependency and is not installed through Composer. Install it with your frontend package manager, for example with Yarn.
+
 ## Install
 ```
 composer require gianlucagiacometti/web-toolbox
