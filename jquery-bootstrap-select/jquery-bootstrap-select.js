@@ -8,7 +8,7 @@
  * the full rendering logic yet.
  */
 
-"use strict"
+"use strict";
 
 (function($) {
 
