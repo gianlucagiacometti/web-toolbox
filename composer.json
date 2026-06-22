@@ -13,12 +13,9 @@
     }
   ],
   "require": {
-    "php": ">=8.4.0"
+    "gianlucagiacometti/bootstrap-select": "^1"
   },
   "suggest": {
-    "twbs/bootstrap": "^5.3",
-    "twbs/bootstrap-icons": "^1",
-    "axllent/jquery": "^4",
     "fortawesome/font-awesome": "^7"
   }
 }
