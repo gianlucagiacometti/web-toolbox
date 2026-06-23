@@ -145,19 +145,29 @@
             this.instance = FORM.select[this.id]
         }
 
-        #destroyExistingBootstrapSelect() {
-            if (typeof FORM === "undefined" || !FORM.select || !FORM.select[this.id]) {
-                return
-            }
+		#destroyExistingBootstrapSelect() {
+			if (typeof FORM === "undefined" || !FORM.select || !FORM.select[this.id]) {
+				return
+			}
 
-            if (typeof FORM.select[this.id].destroy === "function") {
-                FORM.select[this.id].destroy()
-            }
+			let instance = FORM.select[this.id]
+			let wrapper = instance.seq ? document.querySelector("#select-wrapper-" + instance.seq) : null
 
-            delete FORM.select[this.id]
-            this.instance = null
-            this.createdBootstrapSelect = false
-        }
+			if (!wrapper) {
+				delete FORM.select[this.id]
+				this.instance = null
+				this.createdBootstrapSelect = false
+				return
+			}
+
+			if (typeof instance.destroy === "function") {
+				instance.destroy()
+			}
+
+			delete FORM.select[this.id]
+			this.instance = null
+			this.createdBootstrapSelect = false
+		}
 
         #createSequence() {
             return "" + Date.now() + Math.floor(Math.random() * 1000)
