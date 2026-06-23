@@ -11,7 +11,7 @@ Therefore, I conformed the layouts to the Bootstrap standards and I designed all
 ## Requirements
 
 - jQuery 4
-- Bootstrap Select >= 5.3.1
+- Bootstrap Select 5.3.x
 
 jQuery is treated as a frontend dependency and is not installed through Composer. Install it with your frontend package manager, for example with Yarn.
 
