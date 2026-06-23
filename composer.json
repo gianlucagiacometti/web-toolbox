@@ -13,7 +13,7 @@
     }
   ],
   "require": {
-    "gianlucagiacometti/bootstrap-select": "dev-main"
+    "gianlucagiacometti/bootstrap-select": "^5.3"
   },
   "suggest": {
     "fortawesome/font-awesome": "^7"
