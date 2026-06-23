@@ -31,6 +31,7 @@
             map: null
         },
         pagedListMaxHeight: "300px",
+        pagedDropdownWidth: "300px",
         classes: {
             pager: "jquery-bootstrap-select-pager",
             pagerTop: "jquery-bootstrap-select-pager-top",
@@ -103,6 +104,7 @@
             let renderMode = this.element.dataset.bsSelectRenderMode || defaults.renderMode
             let pageSize = parseInt(this.element.dataset.bsSelectPageSize || defaults.pageSize)
             let huge = this.element.dataset.bsSelectHuge == "true"
+            let pagedDropdownWidth = this.element.dataset.bsSelectPagedDropdownWidth || defaults.pagedDropdownWidth
 
             if (huge && renderMode == "normal") {
                 renderMode = "paged"
@@ -111,7 +113,8 @@
             return {
                 huge: huge,
                 pageSize: pageSize,
-                renderMode: renderMode
+                renderMode: renderMode,
+                pagedDropdownWidth: pagedDropdownWidth
             }
         }
 
@@ -298,73 +301,82 @@
             this.#updatePager()
         }
 
-        #createPager(position) {
-            let pager = document.createElement("div")
-            pager.className = this.options.classes.pager + " " + (position == "top" ? this.options.classes.pagerTop : this.options.classes.pagerBottom) + " d-flex align-items-center gap-2 px-2 py-2"
-            pager.dataset.jqueryBootstrapSelectId = this.id
-            pager.dataset.jqueryBootstrapSelectPagerPosition = position
+		#createPager(position) {
+			let pager = document.createElement("div")
+			pager.className = this.options.classes.pager + " " + (position == "top" ? this.options.classes.pagerTop : this.options.classes.pagerBottom) + " d-flex align-items-center gap-2 px-2 py-2"
+			pager.dataset.jqueryBootstrapSelectId = this.id
+			pager.dataset.jqueryBootstrapSelectPagerPosition = position
 
-            if (position == "top") {
-                pager.classList.add("border-bottom")
-            }
-            else {
-                pager.classList.add("border-top")
-            }
+			if (position == "top") {
+				pager.classList.add("border-bottom")
+			}
+			else {
+				pager.classList.add("border-top")
+			}
 
-            let previous = document.createElement("button")
-            previous.type = "button"
-            previous.className = this.options.classes.pagerButton + " " + this.options.classes.pagePrevious + " btn btn-sm btn-outline-secondary"
-            previous.textContent = "Previous"
+			let previous = document.createElement("button")
+			previous.type = "button"
+			previous.className = this.options.classes.pagerButton + " " + this.options.classes.pagePrevious + " btn btn-sm btn-outline-secondary"
+			previous.textContent = "Previous"
 
-            let next = document.createElement("button")
-            next.type = "button"
-            next.className = this.options.classes.pagerButton + " " + this.options.classes.pageNext + " btn btn-sm btn-outline-secondary"
-            next.textContent = "Next"
+			let next = document.createElement("button")
+			next.type = "button"
+			next.className = this.options.classes.pagerButton + " " + this.options.classes.pageNext + " btn btn-sm btn-outline-secondary"
+			next.textContent = "Next"
 
-            let status = document.createElement("span")
-            status.className = this.options.classes.pagerStatus + " small text-muted"
+			let status = document.createElement("span")
+			status.className = this.options.classes.pagerStatus + " small text-muted"
 
-            pager.appendChild(previous)
-            pager.appendChild(next)
-            pager.appendChild(status)
+			pager.appendChild(previous)
+			pager.appendChild(next)
+			pager.appendChild(status)
 
-            pager.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopPropagation()
-            })
+			pager.addEventListener("mousedown", event => {
+				event.preventDefault()
+				event.stopPropagation()
+			})
 
-            previous.addEventListener("click", event => {
-                event.preventDefault()
-                event.stopPropagation()
-                this.previousPage()
-            })
+			previous.addEventListener("click", event => {
+				event.preventDefault()
+				event.stopPropagation()
+				this.previousPage()
+			})
 
-            next.addEventListener("click", event => {
-                event.preventDefault()
-                event.stopPropagation()
-                this.nextPage()
-            })
+			next.addEventListener("click", event => {
+				event.preventDefault()
+				event.stopPropagation()
+				this.nextPage()
+			})
 
-            return pager
-        }
+			return pager
+		}
 
-        #applyPagedFrame(list) {
-            if (!list || !this.options.pagedListMaxHeight) {
-                return
-            }
+		#applyPagedFrame(list) {
+			if (!list) {
+				return
+			}
 
-            list.style.maxHeight = this.options.pagedListMaxHeight
-            list.style.overflowY = "auto"
-        }
+			if (this.options.pagedListMaxHeight) {
+				list.style.maxHeight = this.options.pagedListMaxHeight
+				list.style.overflowY = "auto"
+			}
 
-        #updatePager() {
-            this.totalPages = this.#calculateTotalPages()
+			let dropdown = list.closest(".select-dropdown-wrapper")
 
-            let pagers = this.#getPagerElements()
+			if (dropdown && this.options.pagedDropdownWidth) {
+				dropdown.style.width = this.options.pagedDropdownWidth
+				dropdown.style.maxWidth = this.options.pagedDropdownWidth
+			}
+		}
 
-            if (!pagers.length) {
-                return
-            }
+		#updatePager() {
+			this.totalPages = this.#calculateTotalPages()
+
+			let pagers = this.#getPagerElements()
+
+			if (!pagers.length) {
+				return
+			}
 
             for (let pager of pagers) {
                 let previous = pager.querySelector("." + this.options.classes.pagePrevious)
