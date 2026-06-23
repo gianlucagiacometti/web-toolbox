@@ -1,6 +1,15 @@
 web-toolbox
 ===========
 
+Version 2.1.2
+=============
+
+- Added `pagedDropdownWidth` option to `jquery-bootstrap-select`.
+- Added `data-bs-select-paged-dropdown-width` attribute support.
+- Set the default paged dropdown width to `300px`.
+- Fixed paged dropdown height after changing pages.
+
+
 Version 2.1.1 (2026-06-23)
 ==========================
 
