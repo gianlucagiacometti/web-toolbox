@@ -49,7 +49,7 @@ Load jQuery first, then Bootstrap, then Bootstrap Select, then `jquery-bootstrap
 ```html
 <script src="/assets/jquery/jquery.min.js"></script>
 <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/bootstrap-select/bootstrap.select.js"></script>
+<script src="/assets/bootstrap-select/bootstrap-select.js"></script>
 <script src="/assets/jquery-bootstrap-select/jquery-bootstrap-select.js"></script>
 ```
 
@@ -100,6 +100,7 @@ This is useful when the full native select contains many options, but rendering 
     data-bs-select-huge="true"
     data-bs-select-page-size="50"
     data-bs-select-render-mode="paged"
+    data-bs-select-paged-dropdown-width="300px"
 >
     <option value="it" data-bs-select-option-icon-class="fi fi-it">Italy</option>
     <option value="fr" data-bs-select-option-icon-class="fi fi-fr">France</option>
@@ -120,6 +121,8 @@ Previous | Next | Page 2 / 6
 
 The dropdown keeps its current placement while paging. If Bootstrap opens the dropdown above the field because the select is near the bottom of the page, the dropdown stays above while moving between pages.
 
+Paged mode also applies a default `300px` dropdown width so large lists do not become unnecessarily wide. You can widen it, narrow it, or disable the fixed width with `data-bs-select-paged-dropdown-width` or the `pagedDropdownWidth` JavaScript option.
+
 ### Render modes
 
 | Mode | Description |
@@ -135,6 +138,7 @@ The dropdown keeps its current placement while paging. If Bootstrap opens the dr
 | `data-bs-select-huge="true"` | Enables huge-select handling. If no render mode is provided, paged mode is used. |
 | `data-bs-select-page-size="50"` | Sets how many options are rendered per page. |
 | `data-bs-select-render-mode="paged"` | Sets the render mode. Accepted values are `normal`, `paged`, and `remote`. |
+| `data-bs-select-paged-dropdown-width="300px"` | Sets the dropdown width in paged mode. Use `false` to disable the default fixed width. |
 
 ### JavaScript options
 
@@ -145,7 +149,8 @@ $("#country-select").jqueryBootstrapSelect({
     huge: true,
     pageSize: 50,
     renderMode: "paged",
-    pagedListMaxHeight: "300px"
+    pagedListMaxHeight: "300px",
+    pagedDropdownWidth: "300px"
 })
 ```
 
@@ -156,6 +161,7 @@ $("#country-select").jqueryBootstrapSelect({
 | `renderMode` | `"normal"` | Render mode. Accepted values are `normal`, `paged`, and `remote`. |
 | `destroyBootstrapSelect` | `true` | Allows the wrapper to destroy and rebuild the underlying Bootstrap Select instance when needed. |
 | `pagedListMaxHeight` | `"300px"` | Maximum height of the paged option list before internal scrolling is used. |
+| `pagedDropdownWidth` | `"300px"` | Width applied to the dropdown in paged mode. Use `false` to leave the dropdown width untouched. |
 
 ### Methods
 
