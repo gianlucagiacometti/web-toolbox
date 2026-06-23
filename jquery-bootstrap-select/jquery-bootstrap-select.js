@@ -257,21 +257,26 @@
             }
         }
 
-        #rebuildBootstrapSelect(dropdownState = null, keepDropdownOpen = false) {
-            if (this.options.renderMode != "paged") {
-                return this
-            }
+		#rebuildBootstrapSelect(dropdownState = null, keepDropdownOpen = false) {
+			if (this.options.renderMode != "paged") {
+				return this
+			}
 
-            this.#destroyExistingBootstrapSelect()
-            this.#renderNativePage()
-            this.#ensureBootstrapSelect()
-            this.#bindEvents()
-            this.#renderPager()
-            this.#bindSearchInput()
-            this.#restoreDropdownState(dropdownState, keepDropdownOpen)
+			this.#destroyExistingBootstrapSelect()
+			this.#renderNativePage()
+			this.#ensureBootstrapSelect()
+			this.#bindEvents()
+			this.#renderPager()
+			this.#bindSearchInput()
+			this.#restoreDropdownState(dropdownState, keepDropdownOpen)
+			this.#applyPagedFrame()
 
-            return this
-        }
+			window.setTimeout(() => {
+				this.#applyPagedFrame()
+			}, 0)
+
+			return this
+		}
 
         #renderPager() {
             if (!this.instance || this.options.renderMode != "paged") {
@@ -351,21 +356,33 @@
 			return pager
 		}
 
-		#applyPagedFrame(list) {
+		#applyPagedFrame(list = null) {
+			if (!list) {
+				list = this.#getListElement()
+			}
+
 			if (!list) {
 				return
 			}
 
 			if (this.options.pagedListMaxHeight) {
-				list.style.maxHeight = this.options.pagedListMaxHeight
-				list.style.overflowY = "auto"
+				list.style.setProperty("max-height", this.options.pagedListMaxHeight, "important")
+				list.style.setProperty("overflow-y", "auto", "important")
+			}
+			else {
+				list.style.removeProperty("max-height")
+				list.style.removeProperty("overflow-y")
 			}
 
 			let dropdown = list.closest(".select-dropdown-wrapper")
 
 			if (dropdown && this.options.pagedDropdownWidth) {
-				dropdown.style.width = this.options.pagedDropdownWidth
-				dropdown.style.maxWidth = this.options.pagedDropdownWidth
+				dropdown.style.setProperty("width", this.options.pagedDropdownWidth, "important")
+				dropdown.style.setProperty("max-width", this.options.pagedDropdownWidth, "important")
+			}
+			else if (dropdown) {
+				dropdown.style.removeProperty("width")
+				dropdown.style.removeProperty("max-width")
 			}
 		}
 
