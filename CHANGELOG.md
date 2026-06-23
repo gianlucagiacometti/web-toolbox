@@ -1,6 +1,15 @@
 web-toolbox
 ===========
 
+Version 2.1.4
+=============
+
+- Improved `jquery-bootstrap-select` cleanup when reinitialising selects after AJAX page reloads.
+- Detected stale `FORM.select` registry entries whose generated Bootstrap Select wrapper is no longer present in the DOM.
+- Removed stale registry entries before creating a new select instance.
+- Prevented errors caused by calling `destroy()` on already-removed generated select wrappers.
+
+
 Version 2.1.3
 =============
 
