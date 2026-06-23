@@ -1,6 +1,17 @@
 web-toolbox
 ===========
 
+Version 2.1.3
+=============
+
+- Added `jquery-bootstrap-select.css` companion stylesheet.
+- Improved visual alignment of generated select inputs with Bootstrap form fields.
+- Fixed generated select height in outline-style form layouts.
+- Kept select labels inside the input area with consistent size and position.
+- Added Bootstrap-style select chevron styling for generated select inputs.
+- Removed the incorrect pseudo-element fallback caret for the wrapper layout.
+
+
 Version 2.1.2
 =============
 
