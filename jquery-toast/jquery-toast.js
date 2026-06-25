@@ -17,7 +17,7 @@
  *
  * @param {object} options
  *        Toast configuration.
- *
+ *harmless test comment
  * @return {jQuery}
  *        The generated toast container/object.
  */
