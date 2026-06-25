@@ -11,6 +11,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "scripts/minify-assets.js"
+      - ".github/workflows/minify-assets.yml"
       - "!**/*.min.js"
       - "!**/*.min.css"
   pull_request:
@@ -20,6 +21,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "scripts/minify-assets.js"
+      - ".github/workflows/minify-assets.yml"
       - "!**/*.min.js"
       - "!**/*.min.css"
   workflow_dispatch:
@@ -39,6 +41,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Install build dependencies
         run: |
@@ -53,28 +56,27 @@ jobs:
 
       - name: Verify generated assets on pull requests
         if: github.event_name == 'pull_request'
-        run: git diff --exit-code
+        run: |
+          if [ -n "$(git status --porcelain -- '*.min.js' '*.min.css')" ]; then
+            git status --porcelain -- '*.min.js' '*.min.css'
+            echo "Minified assets are not up to date."
+            exit 1
+          fi
 
       - name: Commit generated minified assets
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
+          find . -type f \( -name "*.min.js" -o -name "*.min.css" \) \
+            -not -path "./node_modules/*" \
+            -not -path "./vendor/*" \
+            -not -path "./.git/*" \
+            -print0 | xargs -0 --no-run-if-empty git add --
+
+          if git diff --cached --quiet; then
+            echo "Minified assets are already up to date."
+          else
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            find . -type f \( -name "*.min.js" -o -name "*.min.css" \) \
-              -not -path "./node_modules/*" \
-              -not -path "./vendor/*" \
-              -not -path "./.git/*" \
-              -print0 | xargs -0 --no-run-if-empty git add --
-            
-            if git diff --cached --quiet; then
-              echo "Minified assets are already up to date."
-            else
-              git config user.name "github-actions[bot]"
-              git config user.email "github-actions[bot]@users.noreply.github.com"
-              git commit -m "Build minified assets [skip ci]"
-              git push
-            fi
-          else
-            echo "Minified assets are already up to date."
+            git commit -m "Build minified assets [skip ci]"
+            git push
           fi
