@@ -1,6 +1,18 @@
 web-toolbox
 ===========
 
+Version 2.1.5
+=============
+
+- Added `jquery-bootstrap-pickadate`, a jQuery wrapper for Bootstrap Pickadate.
+- Added jQuery-style initialisation for `input.bootstrap-pickadate` elements.
+- Added wrapper methods for refresh, locale refresh, reinitialise, destroy, value, clear, today, open, close, toggle, runtime min/max dates, visible month/year, and calendar navigation.
+- Added framework-friendly helper methods for initialising, refreshing, locale-refreshing, destroying, and setting the default locale for pickers inside dynamically injected HTML.
+- Added support for same-input interval values through the existing Bootstrap Pickadate API.
+- Documented that Bootstrap Pickadate 5.3.x is required when using `jquery-bootstrap-pickadate`.
+- Documented that no companion CSS file is required for `jquery-bootstrap-pickadate`.
+
+
 Version 2.1.4
 =============
 
