@@ -1,6 +1,17 @@
 web-toolbox
 ===========
 
+
+Version 2.1.6
+=============
+
+- Keeps the pagination controls visible while the option list is filtered, including `Page 1 / 1`.
+- Preserves the complete search term while the paged Bootstrap Select instance is rebuilt.
+- Restores focus and caret position to the search field after every rebuild.
+- Clears the paged filter correctly when the search clear icon is pressed.
+- Recalculates dropdown placement through Bootstrap instead of restoring stale Popper positioning styles.
+
+
 Version 2.1.5
 =============
 
