@@ -59,8 +59,11 @@
             this.sourceOptions = []
             this.filteredOptions = []
             this.selectedValues = []
+            this.searchTerm = ""
             this.remoteTimer = null
             this.initialised = false
+            this.boundSearchHandler = null
+            this.boundSearchClearHandler = null
 
             this.#init()
         }
@@ -78,6 +81,7 @@
             this.#bindEvents()
             this.#applyRenderMode()
             this.#closeDropdown()
+
             window.setTimeout(() => {
                 this.#closeDropdown()
             }, 0)
@@ -145,29 +149,29 @@
             this.instance = FORM.select[this.id]
         }
 
-		#destroyExistingBootstrapSelect() {
-			if (typeof FORM === "undefined" || !FORM.select || !FORM.select[this.id]) {
-				return
-			}
+        #destroyExistingBootstrapSelect() {
+            if (typeof FORM === "undefined" || !FORM.select || !FORM.select[this.id]) {
+                return
+            }
 
-			let instance = FORM.select[this.id]
-			let wrapper = instance.seq ? document.querySelector("#select-wrapper-" + instance.seq) : null
+            let instance = FORM.select[this.id]
+            let wrapper = instance.seq ? document.querySelector("#select-wrapper-" + instance.seq) : null
 
-			if (!wrapper) {
-				delete FORM.select[this.id]
-				this.instance = null
-				this.createdBootstrapSelect = false
-				return
-			}
+            if (!wrapper) {
+                delete FORM.select[this.id]
+                this.instance = null
+                this.createdBootstrapSelect = false
+                return
+            }
 
-			if (typeof instance.destroy === "function") {
-				instance.destroy()
-			}
+            if (typeof instance.destroy === "function") {
+                instance.destroy()
+            }
 
-			delete FORM.select[this.id]
-			this.instance = null
-			this.createdBootstrapSelect = false
-		}
+            delete FORM.select[this.id]
+            this.instance = null
+            this.createdBootstrapSelect = false
+        }
 
         #createSequence() {
             return "" + Date.now() + Math.floor(Math.random() * 1000)
@@ -267,26 +271,28 @@
             }
         }
 
-		#rebuildBootstrapSelect(dropdownState = null, keepDropdownOpen = false) {
-			if (this.options.renderMode != "paged") {
-				return this
-			}
+        #rebuildBootstrapSelect(dropdownState = null, keepDropdownOpen = false, focusSearch = false) {
+            if (this.options.renderMode != "paged") {
+                return this
+            }
 
-			this.#destroyExistingBootstrapSelect()
-			this.#renderNativePage()
-			this.#ensureBootstrapSelect()
-			this.#bindEvents()
-			this.#renderPager()
-			this.#bindSearchInput()
-			this.#restoreDropdownState(dropdownState, keepDropdownOpen)
-			this.#applyPagedFrame()
+            this.#destroyExistingBootstrapSelect()
+            this.#renderNativePage()
+            this.#ensureBootstrapSelect()
+            this.#bindEvents()
+            this.#renderPager()
+            this.#bindSearchInput()
+            this.#restoreDropdownState(dropdownState, keepDropdownOpen)
+            this.#restoreSearchInput(focusSearch)
+            this.#applyPagedFrame()
 
-			window.setTimeout(() => {
-				this.#applyPagedFrame()
-			}, 0)
+            window.setTimeout(() => {
+                this.#applyPagedFrame()
+                this.#restoreSearchInput(focusSearch)
+            }, 0)
 
-			return this
-		}
+            return this
+        }
 
         #renderPager() {
             if (!this.instance || this.options.renderMode != "paged") {
@@ -303,10 +309,6 @@
 
             this.#applyPagedFrame(list)
 
-            if (this.totalPages <= 1) {
-                return
-            }
-
             let topPager = this.#createPager("top")
             let bottomPager = this.#createPager("bottom")
 
@@ -316,94 +318,94 @@
             this.#updatePager()
         }
 
-		#createPager(position) {
-			let pager = document.createElement("div")
-			pager.className = this.options.classes.pager + " " + (position == "top" ? this.options.classes.pagerTop : this.options.classes.pagerBottom) + " d-flex align-items-center gap-2 px-2 py-2"
-			pager.dataset.jqueryBootstrapSelectId = this.id
-			pager.dataset.jqueryBootstrapSelectPagerPosition = position
+        #createPager(position) {
+            let pager = document.createElement("div")
+            pager.className = this.options.classes.pager + " " + (position == "top" ? this.options.classes.pagerTop : this.options.classes.pagerBottom) + " d-flex align-items-center gap-2 px-2 py-2"
+            pager.dataset.jqueryBootstrapSelectId = this.id
+            pager.dataset.jqueryBootstrapSelectPagerPosition = position
 
-			if (position == "top") {
-				pager.classList.add("border-bottom")
-			}
-			else {
-				pager.classList.add("border-top")
-			}
+            if (position == "top") {
+                pager.classList.add("border-bottom")
+            }
+            else {
+                pager.classList.add("border-top")
+            }
 
-			let previous = document.createElement("button")
-			previous.type = "button"
-			previous.className = this.options.classes.pagerButton + " " + this.options.classes.pagePrevious + " btn btn-sm btn-outline-secondary"
-			previous.textContent = "Previous"
+            let previous = document.createElement("button")
+            previous.type = "button"
+            previous.className = this.options.classes.pagerButton + " " + this.options.classes.pagePrevious + " btn btn-sm btn-outline-secondary"
+            previous.textContent = "Previous"
 
-			let next = document.createElement("button")
-			next.type = "button"
-			next.className = this.options.classes.pagerButton + " " + this.options.classes.pageNext + " btn btn-sm btn-outline-secondary"
-			next.textContent = "Next"
+            let next = document.createElement("button")
+            next.type = "button"
+            next.className = this.options.classes.pagerButton + " " + this.options.classes.pageNext + " btn btn-sm btn-outline-secondary"
+            next.textContent = "Next"
 
-			let status = document.createElement("span")
-			status.className = this.options.classes.pagerStatus + " small text-muted"
+            let status = document.createElement("span")
+            status.className = this.options.classes.pagerStatus + " small text-muted"
 
-			pager.appendChild(previous)
-			pager.appendChild(next)
-			pager.appendChild(status)
+            pager.appendChild(previous)
+            pager.appendChild(next)
+            pager.appendChild(status)
 
-			pager.addEventListener("mousedown", event => {
-				event.preventDefault()
-				event.stopPropagation()
-			})
+            pager.addEventListener("mousedown", event => {
+                event.preventDefault()
+                event.stopPropagation()
+            })
 
-			previous.addEventListener("click", event => {
-				event.preventDefault()
-				event.stopPropagation()
-				this.previousPage()
-			})
+            previous.addEventListener("click", event => {
+                event.preventDefault()
+                event.stopPropagation()
+                this.previousPage()
+            })
 
-			next.addEventListener("click", event => {
-				event.preventDefault()
-				event.stopPropagation()
-				this.nextPage()
-			})
+            next.addEventListener("click", event => {
+                event.preventDefault()
+                event.stopPropagation()
+                this.nextPage()
+            })
 
-			return pager
-		}
+            return pager
+        }
 
-		#applyPagedFrame(list = null) {
-			if (!list) {
-				list = this.#getListElement()
-			}
+        #applyPagedFrame(list = null) {
+            if (!list) {
+                list = this.#getListElement()
+            }
 
-			if (!list) {
-				return
-			}
+            if (!list) {
+                return
+            }
 
-			if (this.options.pagedListMaxHeight) {
-				list.style.setProperty("max-height", this.options.pagedListMaxHeight, "important")
-				list.style.setProperty("overflow-y", "auto", "important")
-			}
-			else {
-				list.style.removeProperty("max-height")
-				list.style.removeProperty("overflow-y")
-			}
+            if (this.options.pagedListMaxHeight) {
+                list.style.setProperty("max-height", this.options.pagedListMaxHeight, "important")
+                list.style.setProperty("overflow-y", "auto", "important")
+            }
+            else {
+                list.style.removeProperty("max-height")
+                list.style.removeProperty("overflow-y")
+            }
 
-			let dropdown = list.closest(".select-dropdown-wrapper")
+            let dropdown = list.closest(".select-dropdown-wrapper")
 
-			if (dropdown && this.options.pagedDropdownWidth) {
-				dropdown.style.setProperty("width", this.options.pagedDropdownWidth, "important")
-				dropdown.style.setProperty("max-width", this.options.pagedDropdownWidth, "important")
-			}
-			else if (dropdown) {
-				dropdown.style.removeProperty("width")
-				dropdown.style.removeProperty("max-width")
-			}
-		}
+            if (dropdown && this.options.pagedDropdownWidth) {
+                dropdown.style.setProperty("width", this.options.pagedDropdownWidth, "important")
+                dropdown.style.setProperty("max-width", this.options.pagedDropdownWidth, "important")
+            }
+            else if (dropdown) {
+                dropdown.style.removeProperty("width")
+                dropdown.style.removeProperty("max-width")
+            }
+        }
 
-		#updatePager() {
-			this.totalPages = this.#calculateTotalPages()
+        #updatePager() {
+            this.totalPages = this.#calculateTotalPages()
 
-			let pagers = this.#getPagerElements()
+            let pagers = this.#getPagerElements()
 
-			if (!pagers.length) {
-				return
-			}
+            if (!pagers.length) {
+                return
+            }
 
             for (let pager of pagers) {
                 let previous = pager.querySelector("." + this.options.classes.pagePrevious)
@@ -431,13 +433,32 @@
                 return
             }
 
-            search.removeEventListener("input", this.boundSearchHandler)
+            if (this.boundSearchHandler) {
+                search.removeEventListener("input", this.boundSearchHandler, true)
+            }
 
             this.boundSearchHandler = event => {
+                event.stopImmediatePropagation()
                 this.filter(event.target.value)
             }
 
-            search.addEventListener("input", this.boundSearchHandler)
+            search.addEventListener("input", this.boundSearchHandler, true)
+
+            let clear = this.#getSearchClearElement()
+
+            if (clear) {
+                if (this.boundSearchClearHandler) {
+                    clear.removeEventListener("click", this.boundSearchClearHandler, true)
+                }
+
+                this.boundSearchClearHandler = event => {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    this.filter("")
+                }
+
+                clear.addEventListener("click", this.boundSearchClearHandler, true)
+            }
         }
 
         #getListElement() {
@@ -464,16 +485,40 @@
             return document.querySelector("#select-search-input-" + this.instance.seq)
         }
 
+        #getSearchClearElement() {
+            if (!this.instance || !this.instance.seq) {
+                return null
+            }
+
+            return document.querySelector("#select-search-icon-" + this.instance.seq)
+        }
+
+        #restoreSearchInput(focus = false) {
+            let search = this.#getSearchInputElement()
+
+            if (!search) {
+                return
+            }
+
+            search.value = this.searchTerm
+
+            if (!focus) {
+                return
+            }
+
+            search.focus({ preventScroll: true })
+
+            let position = search.value.length
+            search.setSelectionRange(position, position)
+        }
+
         #renderRemotePlaceholder() {
             // Remote mode will be implemented after local paged mode is stable.
         }
 
         #captureDropdownState() {
             let state = {
-                open: false,
-                placement: "",
-                style: "",
-                className: ""
+                open: false
             }
 
             if (!this.instance || !this.instance.seq) {
@@ -487,9 +532,6 @@
             }
 
             state.open = dropdown.classList.contains("show")
-            state.placement = dropdown.getAttribute("data-popper-placement") || ""
-            state.style = dropdown.getAttribute("style") || ""
-            state.className = dropdown.className
 
             return state
         }
@@ -500,33 +542,14 @@
                 return
             }
 
-            let dropdown = document.querySelector("#select-dropdown-wrapper-" + this.instance.seq)
-            let input = document.querySelector("#select-input-" + this.instance.seq)
             let inputWrapper = document.querySelector("#select-input-wrapper-" + this.instance.seq)
 
-            if (dropdown) {
-                if (state.className) {
-                    dropdown.className = state.className
-                }
-
-                dropdown.classList.add("show")
-
-                if (state.placement) {
-                    dropdown.setAttribute("data-popper-placement", state.placement)
-                }
-
-                if (state.style) {
-                    dropdown.setAttribute("style", state.style)
-                }
+            if (!inputWrapper) {
+                this.#closeDropdown()
+                return
             }
 
-            if (input) {
-                input.setAttribute("aria-expanded", "true")
-            }
-
-            if (inputWrapper) {
-                inputWrapper.classList.add("show")
-            }
+            bootstrap.Dropdown.getOrCreateInstance(inputWrapper).show()
         }
 
         #openDropdown() {
@@ -581,7 +604,7 @@
             let dropdownState = this.#captureDropdownState()
 
             this.currentPage = page
-            this.#rebuildBootstrapSelect(dropdownState, true)
+            this.#rebuildBootstrapSelect(dropdownState, true, this.searchTerm.length > 0)
 
             return this
         }
@@ -595,22 +618,25 @@
         }
 
         #filterLocalOptions(search = "") {
-            search = String(search).trim().toLowerCase()
+            this.searchTerm = String(search)
+
+            let normalizedSearch = this.searchTerm.trim().toLowerCase()
+
             this.#syncSelectedValuesFromNative()
 
-            if (!search.length) {
+            if (!normalizedSearch.length) {
                 this.filteredOptions = this.sourceOptions
             }
             else {
                 this.filteredOptions = this.sourceOptions.filter(option => {
-                    return option.text.toLowerCase().includes(search) || option.value.toLowerCase().includes(search)
+                    return option.text.toLowerCase().includes(normalizedSearch) || option.value.toLowerCase().includes(normalizedSearch)
                 })
             }
 
             let dropdownState = this.#captureDropdownState()
 
             this.currentPage = 0
-            this.#rebuildBootstrapSelect(dropdownState, dropdownState.open)
+            this.#rebuildBootstrapSelect(dropdownState, dropdownState.open, true)
 
             return this
         }
@@ -638,7 +664,7 @@
             this.#readSourceOptions()
 
             if (this.options.renderMode == "paged") {
-                this.#rebuildBootstrapSelect()
+                this.#filterLocalOptions(this.searchTerm)
             }
 
             return this
