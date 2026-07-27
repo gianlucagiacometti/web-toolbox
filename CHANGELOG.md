@@ -1,6 +1,11 @@
 web-toolbox
 ===========
 
+Version 2.1.7
+=============
+
+- Fix pagination.
+
 
 Version 2.1.6
 =============
