@@ -3,9 +3,11 @@
  *
  * jQuery wrapper and extended rendering layer for bootstrap-select.
  *
- * This version provides the wrapper bridge and local paged mode with stable dropdown placement.
- * Paged mode keeps a full option source in memory and rebuilds the underlying
- * bootstrap-select instance with only the current page of options.
+ * This version provides the wrapper bridge and local paged mode with stable
+ * dropdown placement and canonical selection handling across every page.
+ * Paged mode keeps the complete option source in memory, renders only the
+ * current page, and pins off-page selected options invisibly so native form
+ * submission and Bootstrap Select state remain correct.
  *
  * @author Gianluca Giacometti
  */
@@ -16,6 +18,7 @@
 
     const pluginName = "jqueryBootstrapSelect"
     const dataKey = pluginName
+    const pinnedAttribute = "data-jquery-bootstrap-select-pinned"
 
     const defaults = {
         huge: false,
@@ -59,11 +62,14 @@
             this.sourceOptions = []
             this.filteredOptions = []
             this.selectedValues = []
+            this.defaultSelectedValues = []
             this.searchTerm = ""
             this.remoteTimer = null
             this.initialised = false
             this.boundSearchHandler = null
             this.boundSearchClearHandler = null
+            this.boundFormResetHandler = null
+            this.form = null
 
             this.#init()
         }
@@ -73,12 +79,14 @@
             this.#readSourceOptions()
 
             if (this.options.renderMode == "paged") {
+                this.#setInitialPageFromSelection()
                 this.#destroyExistingBootstrapSelect()
                 this.#renderNativePage()
             }
 
             this.#ensureBootstrapSelect()
             this.#bindEvents()
+            this.#bindFormReset()
             this.#applyRenderMode()
             this.#closeDropdown()
 
@@ -147,6 +155,10 @@
             }
 
             this.instance = FORM.select[this.id]
+
+            if (this.options.renderMode == "paged") {
+                this.#hidePinnedOptions()
+            }
         }
 
         #destroyExistingBootstrapSelect() {
@@ -177,14 +189,42 @@
             return "" + Date.now() + Math.floor(Math.random() * 1000)
         }
 
+        #cleanSourceOption(option) {
+            let clone = option.cloneNode(true)
+
+            delete clone.dataset.rnd
+            clone.removeAttribute(pinnedAttribute)
+
+            return clone
+        }
+
         #readSourceOptions() {
             if (this.sourceOptions.length) {
                 return
             }
 
-            this.sourceOptions = [...this.element.querySelectorAll("option")].map(option => option.cloneNode(true))
-            this.filteredOptions = this.sourceOptions
+            this.sourceOptions = [...this.element.querySelectorAll("option")].map(option => {
+                return this.#cleanSourceOption(option)
+            })
+            this.filteredOptions = [...this.sourceOptions]
             this.selectedValues = this.#readSelectedValues(this.sourceOptions)
+            this.defaultSelectedValues = this.sourceOptions
+                .filter(option => option.defaultSelected)
+                .map(option => option.value)
+
+            if (!this.element.multiple && !this.selectedValues.length) {
+                let firstSelected = this.sourceOptions.find(option => option.selected)
+
+                if (firstSelected) {
+                    this.selectedValues = [firstSelected.value]
+                }
+            }
+
+            if (!this.element.multiple && !this.defaultSelectedValues.length) {
+                this.defaultSelectedValues = [...this.selectedValues]
+            }
+
+            this.#applySelectedValuesToSource()
             this.totalPages = this.#calculateTotalPages()
         }
 
@@ -192,12 +232,40 @@
             return options.filter(option => option.selected).map(option => option.value)
         }
 
+        #normaliseValues(values) {
+            if (values === undefined || values === null) {
+                return []
+            }
+
+            if (!Array.isArray(values)) {
+                values = [values]
+            }
+
+            return [...new Set(values.map(value => String(value)))]
+        }
+
+        #applySelectedValuesToSource() {
+            let selected = new Set(this.selectedValues)
+
+            for (let option of this.sourceOptions) {
+                option.selected = selected.has(option.value)
+            }
+        }
+
         #syncSelectedValuesFromNative() {
+            if (this.options.renderMode != "paged") {
+                this.selectedValues = [...this.element.selectedOptions].map(option => option.value)
+                return
+            }
+
             this.selectedValues = [...this.element.selectedOptions].map(option => option.value)
 
             if (!this.element.multiple && !this.selectedValues.length && this.element.value !== "") {
                 this.selectedValues = [this.element.value]
             }
+
+            this.selectedValues = this.#normaliseValues(this.selectedValues)
+            this.#applySelectedValuesToSource()
         }
 
         #bindEvents() {
@@ -205,6 +273,40 @@
             this.$element.on("change." + pluginName, () => {
                 this.#onNativeChange()
             })
+        }
+
+        #bindFormReset() {
+            this.form = this.element.form
+
+            if (!this.form) {
+                return
+            }
+
+            if (this.boundFormResetHandler) {
+                this.form.removeEventListener("reset", this.boundFormResetHandler)
+            }
+
+            this.boundFormResetHandler = () => {
+                window.setTimeout(() => {
+                    if (!this.initialised) {
+                        return
+                    }
+
+                    if (this.options.renderMode != "paged") {
+                        this.#syncSelectedValuesFromNative()
+                        return
+                    }
+
+                    this.selectedValues = [...this.defaultSelectedValues]
+                    this.#applySelectedValuesToSource()
+                    this.searchTerm = ""
+                    this.filteredOptions = [...this.sourceOptions]
+                    this.#setInitialPageFromSelection()
+                    this.#rebuildBootstrapSelect()
+                }, 0)
+            }
+
+            this.form.addEventListener("reset", this.boundFormResetHandler)
         }
 
         #applyRenderMode() {
@@ -226,6 +328,7 @@
         #enablePagedMode() {
             this.#renderPager()
             this.#bindSearchInput()
+            this.#hidePinnedOptions()
         }
 
         #enableRemoteMode() {
@@ -245,6 +348,25 @@
             return this.filteredOptions.slice(start, end)
         }
 
+        #findOptionPage(value) {
+            let index = this.filteredOptions.findIndex(option => option.value == value)
+
+            return index >= 0 ? Math.floor(index / this.options.pageSize) : -1
+        }
+
+        #setInitialPageFromSelection() {
+            this.currentPage = 0
+
+            for (let value of this.selectedValues) {
+                let page = this.#findOptionPage(value)
+
+                if (page >= 0) {
+                    this.currentPage = page
+                    break
+                }
+            }
+        }
+
         #renderNativePage() {
             if (this.options.renderMode != "paged") {
                 return
@@ -261,13 +383,77 @@
             }
 
             let pageOptions = this.#getPageSlice()
+            let pageOptionSet = new Set(pageOptions)
+            let renderedOptions = this.sourceOptions.filter(option => {
+                return pageOptionSet.has(option) || this.selectedValues.includes(option.value)
+            })
 
             this.element.innerHTML = ""
 
-            for (let option of pageOptions) {
-                let clone = option.cloneNode(true)
+            for (let option of renderedOptions) {
+                let clone = this.#cleanSourceOption(option)
+                let pinned = this.selectedValues.includes(option.value)
+                    && !pageOptionSet.has(option)
+
+                clone.selected = this.selectedValues.includes(clone.value)
+
+                if (pinned) {
+                    clone.setAttribute(pinnedAttribute, "true")
+                }
+
+                this.element.appendChild(clone)
+            }
+
+            if (!this.selectedValues.length) {
+                this.element.selectedIndex = -1
+            }
+            else if (!this.element.multiple) {
+                this.element.value = this.selectedValues[0]
+            }
+        }
+
+        #restoreFullNativeOptions() {
+            if (this.options.renderMode != "paged") {
+                return
+            }
+
+            this.element.innerHTML = ""
+
+            for (let option of this.sourceOptions) {
+                let clone = this.#cleanSourceOption(option)
+
                 clone.selected = this.selectedValues.includes(clone.value)
                 this.element.appendChild(clone)
+            }
+
+            if (!this.selectedValues.length) {
+                this.element.selectedIndex = -1
+            }
+            else if (!this.element.multiple) {
+                this.element.value = this.selectedValues[0]
+            }
+        }
+
+        #hidePinnedOptions() {
+            if (!this.instance || !this.instance.seq || this.options.renderMode != "paged") {
+                return
+            }
+
+            for (let option of this.element.querySelectorAll("option[" + pinnedAttribute + "]")) {
+                let rnd = option.dataset.rnd
+
+                if (!rnd) {
+                    continue
+                }
+
+                let wrapper = document.querySelector(
+                    "#select-option-wrapper-" + this.instance.seq + "-" + rnd
+                )
+
+                if (wrapper) {
+                    wrapper.classList.add("d-none")
+                    wrapper.setAttribute("aria-hidden", "true")
+                }
             }
         }
 
@@ -282,6 +468,7 @@
             this.#bindEvents()
             this.#renderPager()
             this.#bindSearchInput()
+            this.#hidePinnedOptions()
             this.#restoreDropdownState(dropdownState, keepDropdownOpen)
             this.#restoreSearchInput(focusSearch)
             this.#applyPagedFrame()
@@ -289,6 +476,7 @@
             window.setTimeout(() => {
                 this.#applyPagedFrame()
                 this.#restoreSearchInput(focusSearch)
+                this.#hidePinnedOptions()
             }, 0)
 
             return this
@@ -625,11 +813,12 @@
             this.#syncSelectedValuesFromNative()
 
             if (!normalizedSearch.length) {
-                this.filteredOptions = this.sourceOptions
+                this.filteredOptions = [...this.sourceOptions]
             }
             else {
                 this.filteredOptions = this.sourceOptions.filter(option => {
-                    return option.text.toLowerCase().includes(normalizedSearch) || option.value.toLowerCase().includes(normalizedSearch)
+                    return option.text.toLowerCase().includes(normalizedSearch)
+                        || option.value.toLowerCase().includes(normalizedSearch)
                 })
             }
 
@@ -649,7 +838,7 @@
         }
 
         #handleRemoteResponse(response) {
-            // Placeholder: normalize remote response and update native SELECT / rendered page.
+            // Placeholder: normalise remote results and update the rendered page.
             void response
 
             return this
@@ -659,13 +848,105 @@
             this.#syncSelectedValuesFromNative()
         }
 
-        refresh() {
-            this.sourceOptions = []
-            this.#readSourceOptions()
+        #dispatchChange() {
+            this.element.dispatchEvent(new Event("change", { bubbles: true }))
+        }
 
-            if (this.options.renderMode == "paged") {
-                this.#filterLocalOptions(this.searchTerm)
+        #normaliseValueParameters(parameters = {}) {
+            return Object.assign({
+                swap: true,
+                disabled: false
+            }, parameters || {})
+        }
+
+        #setPagedValue(values, parameters = {}) {
+            parameters = this.#normaliseValueParameters(parameters)
+            values = this.#normaliseValues(values)
+
+            if (!this.element.multiple) {
+                let value = values.length ? values[0] : ""
+                let option = this.sourceOptions.find(item => item.value == value)
+
+                if (!option) {
+                    return this
+                }
+
+                if (option.disabled && !parameters.disabled) {
+                    console.warn(
+                        "Warning: Trying to select a disabled option; use `.value(value, { disabled: true })` to select disabled options"
+                    )
+                    return this
+                }
+
+                this.selectedValues = [option.value]
+                this.#applySelectedValuesToSource()
+
+                let page = this.#findOptionPage(option.value)
+
+                if (page >= 0) {
+                    this.currentPage = page
+                }
+
+                this.#rebuildBootstrapSelect()
+                this.#dispatchChange()
+
+                return this
             }
+
+            let selected = parameters.swap
+                ? new Set()
+                : new Set(this.selectedValues)
+
+            for (let value of values) {
+                let matchingOptions = this.sourceOptions.filter(option => option.value == value)
+
+                for (let option of matchingOptions) {
+                    if (option.disabled && !parameters.disabled) {
+                        console.warn(
+                            "Warning: Trying to select the disabled option with value "
+                            + option.value
+                            + "; use `.value(value, { disabled: true })` to select disabled options"
+                        )
+                        continue
+                    }
+
+                    selected.add(option.value)
+                }
+            }
+
+            this.selectedValues = [...selected]
+            this.#applySelectedValuesToSource()
+            this.#rebuildBootstrapSelect()
+            this.#dispatchChange()
+
+            return this
+        }
+
+        refresh() {
+            if (this.options.renderMode != "paged") {
+                if (this.instance && typeof this.instance.refresh === "function") {
+                    this.instance.refresh()
+                }
+
+                return this
+            }
+
+            this.#syncSelectedValuesFromNative()
+            this.#applySelectedValuesToSource()
+
+            let normalizedSearch = this.searchTerm.trim().toLowerCase()
+
+            if (!normalizedSearch.length) {
+                this.filteredOptions = [...this.sourceOptions]
+            }
+            else {
+                this.filteredOptions = this.sourceOptions.filter(option => {
+                    return option.text.toLowerCase().includes(normalizedSearch)
+                        || option.value.toLowerCase().includes(normalizedSearch)
+                })
+            }
+
+            this.#rebuildBootstrapSelect()
 
             return this
         }
@@ -674,7 +955,22 @@
             this.$element.off("." + pluginName)
             this.#removePager()
 
-            if (this.options.destroyBootstrapSelect && this.createdBootstrapSelect && this.instance && typeof this.instance.destroy === "function") {
+            if (this.form && this.boundFormResetHandler) {
+                this.form.removeEventListener("reset", this.boundFormResetHandler)
+            }
+
+            if (this.options.renderMode == "paged") {
+                this.#syncSelectedValuesFromNative()
+                this.#applySelectedValuesToSource()
+                this.#restoreFullNativeOptions()
+            }
+
+            if (
+                this.options.destroyBootstrapSelect
+                && this.createdBootstrapSelect
+                && this.instance
+                && typeof this.instance.destroy === "function"
+            ) {
                 this.instance.destroy()
                 delete FORM.select[this.id]
             }
@@ -691,7 +987,17 @@
             }
 
             if (values === undefined) {
+                if (this.options.renderMode == "paged") {
+                    return this.element.multiple
+                        ? [...this.selectedValues]
+                        : (this.selectedValues[0] ?? "")
+                }
+
                 return this.instance.value()
+            }
+
+            if (this.options.renderMode == "paged") {
+                return this.#setPagedValue(values, parameters)
             }
 
             this.instance.value(values, parameters)
@@ -702,8 +1008,26 @@
 
         sort(parameters) {
             if (this.options.renderMode == "paged") {
-                this.sourceOptions.sort((a, b) => a.text.localeCompare(b.text))
-                this.filteredOptions = this.filteredOptions.sort((a, b) => a.text.localeCompare(b.text))
+                this.#syncSelectedValuesFromNative()
+                this.sourceOptions.sort((first, second) => {
+                    return first.text.localeCompare(second.text)
+                })
+
+                let normalizedSearch = this.searchTerm.trim().toLowerCase()
+
+                this.filteredOptions = !normalizedSearch.length
+                    ? [...this.sourceOptions]
+                    : this.sourceOptions.filter(option => {
+                        return option.text.toLowerCase().includes(normalizedSearch)
+                            || option.value.toLowerCase().includes(normalizedSearch)
+                    })
+
+                this.totalPages = this.#calculateTotalPages()
+
+                if (this.currentPage >= this.totalPages) {
+                    this.currentPage = this.totalPages - 1
+                }
+
                 this.#rebuildBootstrapSelect()
 
                 return this
