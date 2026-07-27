@@ -1,6 +1,17 @@
 web-toolbox
 ===========
 
+Version 2.1.8
+=============
+
+- Fixed paged Bootstrap Select losing selected values outside the rendered page.
+- Preserved single and multiple selections while paging, filtering and refreshing.
+- Fixed programmatic selection of off-page values.
+- Preserved current values through destroy and reinitialisation.
+- Restored original default values correctly on form reset.
+- Ensured form submission includes all selected values, including off-page selections.
+
+
 Version 2.1.7
 =============
 
