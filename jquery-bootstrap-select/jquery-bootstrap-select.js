@@ -190,10 +190,15 @@
         }
 
         #cleanSourceOption(option) {
+            let selected = option.selected
+            let defaultSelected = option.defaultSelected
             let clone = option.cloneNode(true)
 
             delete clone.dataset.rnd
             clone.removeAttribute(pinnedAttribute)
+
+            clone.defaultSelected = defaultSelected
+            clone.selected = selected
 
             return clone
         }
