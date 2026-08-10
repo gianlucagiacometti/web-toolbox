@@ -427,7 +427,7 @@
             for (let option of this.sourceOptions) {
                 let clone = this.#cleanSourceOption(option)
 
-                clone.selected = this.selectedValues.includes(clone.value)
+                clone.selected = this.selectedValues.includes(option.value)
                 this.element.appendChild(clone)
             }
 
@@ -597,8 +597,7 @@
             let pagers = this.#getPagerElements()
 
             if (!pagers.length) {
-                return
-            }
+                return            }
 
             for (let pager of pagers) {
                 let previous = pager.querySelector("." + this.options.classes.pagePrevious)
@@ -810,22 +809,23 @@
             return this.#goToPage(this.currentPage + 1)
         }
 
-        #filterLocalOptions(search = "") {
-            this.searchTerm = String(search)
-
-            let normalizedSearch = this.searchTerm.trim().toLowerCase()
-
-            this.#syncSelectedValuesFromNative()
+        #filterSourceOptions(search = "") {
+            let normalizedSearch = bsSelect.normaliseSearchText(String(search).trim())
 
             if (!normalizedSearch.length) {
-                this.filteredOptions = [...this.sourceOptions]
+                return [...this.sourceOptions]
             }
-            else {
-                this.filteredOptions = this.sourceOptions.filter(option => {
-                    return option.text.toLowerCase().includes(normalizedSearch)
-                        || option.value.toLowerCase().includes(normalizedSearch)
-                })
-            }
+
+            return this.sourceOptions.filter(option => {
+                return bsSelect.normaliseSearchText(option.text).includes(normalizedSearch)
+                    || bsSelect.normaliseSearchText(option.value).includes(normalizedSearch)
+            })
+        }
+
+        #filterLocalOptions(search = "") {
+            this.searchTerm = String(search)
+            this.#syncSelectedValuesFromNative()
+            this.filteredOptions = this.#filterSourceOptions(this.searchTerm)
 
             let dropdownState = this.#captureDropdownState()
 
@@ -897,7 +897,6 @@
 
                 return this
             }
-
             let selected = parameters.swap
                 ? new Set()
                 : new Set(this.selectedValues)
@@ -939,17 +938,7 @@
             this.#syncSelectedValuesFromNative()
             this.#applySelectedValuesToSource()
 
-            let normalizedSearch = this.searchTerm.trim().toLowerCase()
-
-            if (!normalizedSearch.length) {
-                this.filteredOptions = [...this.sourceOptions]
-            }
-            else {
-                this.filteredOptions = this.sourceOptions.filter(option => {
-                    return option.text.toLowerCase().includes(normalizedSearch)
-                        || option.value.toLowerCase().includes(normalizedSearch)
-                })
-            }
+            this.filteredOptions = this.#filterSourceOptions(this.searchTerm)
 
             this.#rebuildBootstrapSelect()
 
@@ -1018,14 +1007,7 @@
                     return first.text.localeCompare(second.text)
                 })
 
-                let normalizedSearch = this.searchTerm.trim().toLowerCase()
-
-                this.filteredOptions = !normalizedSearch.length
-                    ? [...this.sourceOptions]
-                    : this.sourceOptions.filter(option => {
-                        return option.text.toLowerCase().includes(normalizedSearch)
-                            || option.value.toLowerCase().includes(normalizedSearch)
-                    })
+                this.filteredOptions = this.#filterSourceOptions(this.searchTerm)
 
                 this.totalPages = this.#calculateTotalPages()
 
