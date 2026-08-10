@@ -1,6 +1,16 @@
 web-toolbox
 ===========
 
+
+Version 2.1.9
+=============
+
+- Added diacritic-insensitive filtering to paged `jquery-bootstrap-select` searches.
+- Reused Bootstrap Select's Unicode search normalisation for option text and values.
+- Centralised paged filtering so `filter()`, `refresh()` and `sort()` use identical search semantics.
+- Raised the Bootstrap Select dependency to `^5.3.7`.
+
+
 Version 2.1.8
 =============
 
