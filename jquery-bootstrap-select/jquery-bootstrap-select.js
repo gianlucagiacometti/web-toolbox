@@ -757,6 +757,15 @@
             let input = document.querySelector("#select-input-" + this.instance.seq)
             let inputWrapper = document.querySelector("#select-input-wrapper-" + this.instance.seq)
 
+            if (inputWrapper && typeof bootstrap !== "undefined" && bootstrap.Dropdown) {
+                let dropdownInstance = bootstrap.Dropdown.getInstance(inputWrapper)
+
+                if (dropdownInstance) {
+                    dropdownInstance.hide()
+                    return
+                }
+            }
+
             if (dropdown) {
                 dropdown.classList.remove("show")
                 dropdown.removeAttribute("data-popper-placement")
