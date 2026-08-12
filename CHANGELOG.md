@@ -2,6 +2,14 @@ web-toolbox
 ===========
 
 
+Version 2.1.10
+==============
+
+- Updated paged `jquery-bootstrap-select` dropdown closing to use Bootstrap's `Dropdown.hide()` lifecycle when an active instance exists.
+- Prevented stale Popper placement state from surviving wrapper-driven dropdown closes and affecting subsequent openings.
+- Retained the existing manual state cleanup as a fallback when no Bootstrap Dropdown instance exists yet.
+
+
 Version 2.1.9
 =============
 
