@@ -64,6 +64,7 @@
             this.selectedValues = []
             this.defaultSelectedValues = []
             this.searchTerm = ""
+            this.allowedValues = null
             this.remoteTimer = null
             this.initialised = false
             this.boundSearchHandler = null
@@ -303,9 +304,10 @@
                     }
 
                     this.selectedValues = [...this.defaultSelectedValues]
+                    this.#limitSelectedValuesToAllowed()
                     this.#applySelectedValuesToSource()
                     this.searchTerm = ""
-                    this.filteredOptions = [...this.sourceOptions]
+                    this.filteredOptions = this.#filterSourceOptions(this.searchTerm)
                     this.#setInitialPageFromSelection()
                     this.#rebuildBootstrapSelect()
                 }, 0)
@@ -427,7 +429,7 @@
             for (let option of this.sourceOptions) {
                 let clone = this.#cleanSourceOption(option)
 
-                clone.selected = this.selectedValues.includes(option.value)
+                clone.selected = this.selectedValues.includes(clone.value)
                 this.element.appendChild(clone)
             }
 
@@ -818,14 +820,40 @@
             return this.#goToPage(this.currentPage + 1)
         }
 
-        #filterSourceOptions(search = "") {
-            let normalizedSearch = bsSelect.normaliseSearchText(String(search).trim())
-
-            if (!normalizedSearch.length) {
+        #getAllowedSourceOptions() {
+            if (this.allowedValues === null) {
                 return [...this.sourceOptions]
             }
 
             return this.sourceOptions.filter(option => {
+                return this.allowedValues.has(option.value)
+            })
+        }
+
+        #limitSelectedValuesToAllowed() {
+            if (this.allowedValues === null) {
+                return false
+            }
+
+            let selectedValues = this.selectedValues.filter(value => {
+                return this.allowedValues.has(value)
+            })
+            let changed = selectedValues.length != this.selectedValues.length
+
+            this.selectedValues = selectedValues
+
+            return changed
+        }
+
+        #filterSourceOptions(search = "") {
+            let sourceOptions = this.#getAllowedSourceOptions()
+            let normalizedSearch = bsSelect.normaliseSearchText(String(search).trim())
+
+            if (!normalizedSearch.length) {
+                return sourceOptions
+            }
+
+            return sourceOptions.filter(option => {
                 return bsSelect.normaliseSearchText(option.text).includes(normalizedSearch)
                     || bsSelect.normaliseSearchText(option.value).includes(normalizedSearch)
             })
@@ -877,9 +905,11 @@
             parameters = this.#normaliseValueParameters(parameters)
             values = this.#normaliseValues(values)
 
+            let availableOptions = this.#getAllowedSourceOptions()
+
             if (!this.element.multiple) {
                 let value = values.length ? values[0] : ""
-                let option = this.sourceOptions.find(item => item.value == value)
+                let option = availableOptions.find(item => item.value == value)
 
                 if (!option) {
                     return this
@@ -911,7 +941,7 @@
                 : new Set(this.selectedValues)
 
             for (let value of values) {
-                let matchingOptions = this.sourceOptions.filter(option => option.value == value)
+                let matchingOptions = availableOptions.filter(option => option.value == value)
 
                 for (let option of matchingOptions) {
                     if (option.disabled && !parameters.disabled) {
@@ -1119,6 +1149,40 @@
             }
 
             return this.#filterLocalOptions(search)
+        }
+
+        filterValues(values = null) {
+            if (this.options.renderMode != "paged") {
+                console.warn("jquery-bootstrap-select filterValues() is only available in paged mode")
+
+                return this
+            }
+
+            this.#syncSelectedValuesFromNative()
+
+            this.allowedValues = values === null
+                ? null
+                : new Set(this.#normaliseValues(values))
+
+            let selectionChanged = this.#limitSelectedValuesToAllowed()
+
+            this.#applySelectedValuesToSource()
+            this.filteredOptions = this.#filterSourceOptions(this.searchTerm)
+            this.#setInitialPageFromSelection()
+
+            let dropdownState = this.#captureDropdownState()
+
+            this.#rebuildBootstrapSelect(
+                dropdownState,
+                dropdownState.open,
+                this.searchTerm.length > 0
+            )
+
+            if (selectionChanged) {
+                this.#dispatchChange()
+            }
+
+            return this
         }
 
         #removePager() {
