@@ -2,6 +2,15 @@ web-toolbox
 ===========
 
 
+Version 2.1.11
+==============
+
+- Added `filterValues()` to paged `jquery-bootstrap-select` controls for exact option-value filtering without direct native `<select>` manipulation.
+- Added support for a single value or an array of values, with `null` restoring the complete paged source.
+- Composed exact-value filtering with existing text search, pagination, sorting and refresh behaviour.
+- Cleared selections that fall outside the active value filter and prevented `value()` from selecting filtered-out options.
+
+
 Version 2.1.10
 ==============
 
