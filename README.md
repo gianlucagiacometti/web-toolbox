@@ -320,11 +320,37 @@ $("#country-select").jqueryBootstrapSelect("filter", "it")
 ```
 
 
+#### `filterValues(values)`
+
+Restricts local source options in paged mode by exact option value without changing the complete cached source.
+
+A single value or an array of values is accepted:
+
+```js
+$("#country-select").jqueryBootstrapSelect("filterValues", "it")
+$("#country-select").jqueryBootstrapSelect("filterValues", ["it", "fr", "jp"])
+```
+
+The value filter is combined with the existing text filter, pagination, sorting and refresh behaviour.
+
+If the current selection is not part of the allowed value set, the selection is cleared and the normal `change` event is dispatched. Programmatic `value()` calls also respect the active value filter and cannot select an option which is currently excluded.
+
+Passing `null`, or calling the method without an argument, restores the complete paged source:
+
+```js
+$("#country-select").jqueryBootstrapSelect("filterValues", null)
+```
+
+`filterValues()` is available only in paged mode. In normal mode the wrapper continues to delegate option management to Bootstrap Select.
+
+
 ### Notes on paged mode
 
 Paged mode is designed for large local lists.
 
 The original options are cloned and kept in memory. Only the current page is written into the native select and rendered by Bootstrap Select.
+
+The `filter()` method applies text filtering to the cached source. The `filterValues()` method applies an exact-value restriction to the same cached source. When both are active, only options matching both filters are rendered.
 
 Current limits:
 
