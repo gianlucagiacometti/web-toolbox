@@ -2,6 +2,15 @@ web-toolbox
 ===========
 
 
+Version 2.1.12
+==============
+
+- Added `formatInterval(start, end, options)` to `jquery-bootstrap-pickadate` instances, delegating compact localised interval formatting to Bootstrap Pickadate.
+- Added `$.jqueryBootstrapPickadate.formatInterval(start, end, options)` for read-only dates and other cases where no picker input exists.
+- Raised the Bootstrap Pickadate dependency to `^5.3.1` so the formatter API is guaranteed to be available.
+- Kept the jQuery layer thin: interval grammar and locale handling remain owned by Bootstrap Pickadate.
+
+
 Version 2.1.11
 ==============
 
