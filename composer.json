@@ -14,7 +14,7 @@
   ],
   "require": {
     "gianlucagiacometti/bootstrap-select": "^5.3.7",
-    "gianlucagiacometti/bootstrap-pickadate": "^5.3"
+    "gianlucagiacometti/bootstrap-pickadate": "^5.3.1"
   },
   "suggest": {
     "fortawesome/font-awesome": "^7"
