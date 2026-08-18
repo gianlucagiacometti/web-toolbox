@@ -519,6 +519,41 @@ $("#booking-dates-display").jqueryBootstrapPickadate("value", "2026-06-01/2026-0
 ```
 
 
+#### `formatInterval(start, end, options)`
+
+Formats a compact localised date interval through Bootstrap Pickadate.
+
+```js
+$("#booking-dates-display").jqueryBootstrapPickadate(
+    "formatInterval",
+    "2026-09-12",
+    "2026-09-13",
+    { dateStyle: "long" }
+)
+```
+
+The instance method automatically uses the picker's current locale unless `options.locale` overrides it.
+
+
+## Second insertion
+
+In the Framework helpers section, paste this after the `setDefaultLocale()` example and before the paragraph beginning `This is useful after AJAX-rendered HTML...`.
+
+For read-only dates or other places where no picker input exists, use the static wrapper helper:
+
+```js
+$.jqueryBootstrapPickadate.formatInterval(
+    "2026-09-12",
+    "2026-09-13",
+    {
+        locale: "current",
+        dateStyle: "long"
+    }
+)
+// September 12–13, 2026 when the current locale is English
+```
+
+
 #### `clear()`
 
 Clears the picker value.
