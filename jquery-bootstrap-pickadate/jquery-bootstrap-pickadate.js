@@ -123,6 +123,14 @@
             return this
         }
 
+        formatInterval(start, end, options = {}) {
+            if (!this.instance || typeof this.instance.formatInterval !== "function") {
+                return ""
+            }
+
+            return this.instance.formatInterval(start, end, options)
+        }
+
         clear() {
             if (this.instance && typeof this.instance.clear === "function") {
                 this.instance.clear()
@@ -275,6 +283,14 @@
 
         destroyAll(container = document) {
             return findPickadates(container).jqueryBootstrapPickadate("destroy")
+        },
+
+        formatInterval(start, end, options = {}) {
+            if (typeof window.bsPickadate !== "function" || typeof window.bsPickadate.formatInterval !== "function") {
+                return ""
+            }
+
+            return window.bsPickadate.formatInterval(start, end, options)
         },
 
         setDefaultLocale(locale) {
